@@ -17,69 +17,76 @@
         padding: 20px;
     }
     .message {
-        padding: 10px;
+        display: flex;
+        align-items: center;
         margin-bottom: 10px;
+    }
+    .message .user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+    .message .user-info {
+        flex-grow: 1;
+    }
+    .message .user-info .user-name {
+        font-weight: bold;
+    }
+    .message .message-text {
+        background-color: #f0f0f0;
+        padding: 10px;
         border-radius: 5px;
-    }
-    .user1 {
-        background-color: #e1f7d5;
-        align-self: flex-start;
-    }
-    .user2 {
-        background-color: #d5e8f7;
-        align-self: flex-end;
-    }
-    .message input[type="text"] {
-        width: calc(100% - 70px);
-        padding: 5px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        margin-right: 5px;
-    }
-    .message button {
-        padding: 5px 10px;
-        border: none;
-        border-radius: 3px;
-        background-color: #007bff;
-        color: white;
-        cursor: pointer;
     }
 </style>
 </head>
 <body>
-<div class="chat-container">
-    <div id="chatBox"></div>
-    <div class="message">
-        <input type="text" id="messageInput" placeholder="Type your message...">
-        <button onclick="sendMessage()">Send</button>
-    </div>
+<div class="chat-container" id="chatContainer">
+</div>
+<div>
+    <input type="file" id="fileInput" accept="image/*">
+    <button onclick="uploadAvatar()">Upload Avatar</button>
 </div>
 <script>
-    let currentUser = prompt("Please enter your nickname:");
-    let currentUserId = Math.random().toString(36).substr(2, 9); // Generating random user id
-    let chatBox = document.getElementById('chatBox');
+    const users = {};
 
-    function sendMessage() {
-        let messageInput = document.getElementById('messageInput');
-        let messageText = messageInput.value.trim();
-        if (messageText !== '') {
-            appendMessage(currentUserId, currentUser, messageText);
-            messageInput.value = '';
-        }
-    }
-
-    function appendMessage(userId, userName, message) {
-        let messageElement = document.createElement('div');
+    function appendMessage(user, message) {
+        const chatContainer = document.getElementById('chatContainer');
+        const messageElement = document.createElement('div');
         messageElement.classList.add('message');
-        if (userId === currentUserId) {
-            messageElement.classList.add('user1');
-        } else {
-            messageElement.classList.add('user2');
-        }
-        messageElement.innerHTML = `<strong>${userName}:</strong> ${message}`;
-        chatBox.appendChild(messageElement);
-        chatBox.scrollTop = chatBox.scrollHeight;
+        messageElement.innerHTML = `
+            <img src="${user.avatar}" alt="User Avatar" class="user-avatar">
+            <div class="user-info">
+                <span class="user-name">${user.name}</span>: 
+                <span class="message-text">${message}</span>
+            </div>`;
+        chatContainer.appendChild(messageElement);
     }
+
+    function uploadAvatar() {
+        const fileInput = document.getElementById('fileInput');
+        const file = fileInput.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const avatarUrl = event.target.result;
+                const userId = '_' + Math.random().toString(36).substr(2, 9);
+                users[userId] = { name: 'User', avatar: avatarUrl };
+                console.log('Avatar uploaded successfully');
+            };
+            reader.readAsDataURL(file);
+        }
+    }
+
+    // Example usage:
+    // For demonstration purposes, let's simulate sending a message after uploading the avatar
+    setTimeout(function() {
+        uploadAvatar();
+        setTimeout(function() {
+            const userId = Object.keys(users)[0];
+            appendMessage(users[userId], 'Hello, world!');
+        }, 2000);
+    }, 2000);
 </script>
 </body>
 </html>
