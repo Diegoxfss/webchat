@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -141,25 +141,92 @@
         chatMessagesContainer.innerHTML = '';
 
         const currentRoom = chatRooms[currentRoomIndex];
-currentRoom.messages.forEach(message => {
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message');
+        currentRoom.messages.forEach(message => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
 
-    if (message.messageText) {
-        const messageTextElement = document.createElement('span');
-        messageTextElement.textContent = message.messageText;
-        messageElement.appendChild(messageTextElement);
+            if (message.messageText) {
+                const messageTextElement = document.createElement('span');
+                messageTextElement.textContent = message.messageText;
+                messageElement.appendChild(messageTextElement);
+            }
+
+            if (message.imageFile) {
+                const imageElement = document.createElement('img');
+                imageElement.src = URL.createObjectURL(message.imageFile);
+                imageElement.alt = 'Image';
+                messageElement.appendChild(imageElement);
+            }
+
+            chatMessagesContainer.appendChild(messageElement);
+        });
     }
 
-    if (message.imageFile) {
-        const imageElement = document.createElement('img');
-        imageElement.src = URL.createObjectURL(message.imageFile);
-        imageElement.alt = 'Image';
-        messageElement.appendChild(imageElement);
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const imageInput = document.getElementById('imageInput');
+        const messageText = messageInput.value.trim();
+        const imageFile = imageInput.files[0];
+
+        if (messageText === '' && !imageFile) return;
+
+        const currentRoom = chatRooms[currentRoomIndex];
+        const message = {
+            userId: currentRoom.messages.length, // Temporary user ID
+            userName: "Anonymous", // Temporary user name
+            messageText
+        };
+
+        if (imageFile) {
+            message.imageFile = imageFile;
+        }
+
+        currentRoom.messages.push(message);
+        renderChatMessages();
+        messageInput.value = '';
+        imageInput.value = null;
     }
 
-    chatMessagesContainer.appendChild(messageElement);
-});
-        </script>
+    function handleRoomAvatarUpload(event) {
+    const roomAvatarPreview = document.getElementById('roomAvatarPreview');
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const MAX_WIDTH = 50; // Maximum width for the image
+                const MAX_HEIGHT = 50; // Maximum height for the image
+                let width = img.width;
+                let height = img.height;
+
+                // Check if resizing is necessary
+                if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                    if (width > height) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    } else {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                // Create a canvas element to draw the resized image
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+
+                // Set the canvas data as the source of the preview image
+                roomAvatarPreview.src = canvas.toDataURL('image/png');
+                roomAvatarPreview.style.display = 'block';
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+}
+</script>
 </body>
 </html>
