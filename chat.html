@@ -217,6 +217,20 @@ function sendMessage() {
     messageInput.value = '';
     imageInput.value = null;
 }
+    // Function to handle profile picture upload
+function handleProfilePictureUpload(event) {
+    const profilePicturePreview = document.getElementById('profilePicturePreview');
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            profilePicturePreview.src = event.target.result;
+            profilePicturePreview.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
 </script>
 </body>
 </html>
