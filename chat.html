@@ -16,6 +16,16 @@
         margin: 0 auto;
         padding: 20px;
     }
+    .login-container {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    .login-container input[type="email"],
+    .login-container input[type="password"],
+    .login-container input[type="text"],
+    .login-container button {
+        margin-bottom: 10px;
+    }
     .chat-room {
         display: flex;
         align-items: center;
@@ -60,17 +70,28 @@
 </head>
 <body>
 <div class="container">
-    <h2>Chat Rooms</h2>
-    <div id="chatRooms"></div>
-    <div class="create-room">
-        <h3>Create New Chat Room</h3>
-        <input type="text" id="roomName" placeholder="Room Name">
-        <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
-        <textarea id="roomBio" placeholder="Room Bio"></textarea>
-        <button onclick="createChatRoom()">Create Room</button>
+    <div class="login-container">
+        <h2>Login</h2>
+        <input type="email" id="emailInput" placeholder="Email">
+        <input type="password" id="passwordInput" placeholder="Password">
+        <button onclick="login()">Login</button>
     </div>
-    <div class="chat-container" id="chatContainer">
-        <h2 id="roomTitle"></h2>
+    <div id="profileInfo" style="display: none;">
+        <h2>Create Profile</h2>
+        <input type="text" id="nicknameInput" placeholder="Nickname">
+        <input type="file" accept="image/*" id="avatarInput">
+        <button onclick="createProfile()">Create Profile</button>
+    </div>
+    <div class="chat-container" id="chatContainer" style="display: none;">
+        <h2>Chat Rooms</h2>
+        <div id="chatRooms"></div>
+        <div class="create-room">
+            <h3>Create New Chat Room</h3>
+            <input type="text" id="roomName" placeholder="Room Name">
+            <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
+            <textarea id="roomBio" placeholder="Room Bio"></textarea>
+            <button onclick="createChatRoom()">Create Room</button>
+        </div>
         <div id="chatMessages"></div>
         <div class="message">
             <input type="text" id="messageInput" placeholder="Type your message...">
@@ -83,28 +104,21 @@
     let chatRooms = [];
     let currentRoomIndex = -1; // Index of the current room being viewed
 
-    function renderChatRooms() {
-        const chatRoomsContainer = document.getElementById('chatRooms');
-        chatRoomsContainer.innerHTML = '';
+    function login() {
+        // Perform login logic here
+        // For simplicity, let's just assume login is successful
+        document.getElementById('profileInfo').style.display = 'block';
+        document.getElementById('chatContainer').style.display = 'block';
+    }
 
-        chatRooms.forEach((room, index) => {
-            const roomElement = document.createElement('div');
-            roomElement.classList.add('chat-room');
-            roomElement.onclick = () => enterChatRoom(index);
+    function createProfile() {
+        const nickname = document.getElementById('nicknameInput').value.trim();
+        const avatar = document.getElementById('avatarInput').files[0];
 
-            const roomAvatar = document.createElement('img');
-            roomAvatar.src = room.avatar || 'default-room-avatar.png';
-            roomAvatar.alt = room.name + ' Avatar';
+        // Perform profile creation logic here
+        // For simplicity, let's just assume profile creation is successful
 
-            const roomInfo = document.createElement('div');
-            roomInfo.classList.add('chat-room-info');
-            roomInfo.innerHTML = `<strong>${room.name}</strong><br>${room.bio}`;
-
-            roomElement.appendChild(roomAvatar);
-            roomElement.appendChild(roomInfo);
-
-            chatRoomsContainer.appendChild(roomElement);
-        });
+        document.getElementById('profileInfo').style.display = 'none';
     }
 
     function createChatRoom() {
@@ -136,13 +150,37 @@
         document.getElementById('chatContainer').style.display = 'block';
     }
 
+    function renderChatRooms() {
+        const chatRoomsContainer = document.getElementById('chatRooms');
+        chatRoomsContainer.innerHTML = '';
+
+        chatRooms.forEach((room, index) => {
+            const roomElement = document.createElement('div');
+            roomElement.classList.add('chat-room');
+            roomElement.onclick = () => enterChatRoom(index);
+
+            const roomAvatar = document.createElement('img');
+            roomAvatar.src = room.avatar || 'default-room-avatar.png';
+            roomAvatar.alt = room.name + ' Avatar';
+
+            const roomInfo = document.createElement('div');
+            roomInfo.classList.add('chat-room-info');
+            roomInfo.innerHTML = `<strong>${room.name}</strong><br>${room.bio}`;
+
+            roomElement.appendChild(roomAvatar);
+            roomElement.appendChild(roomInfo);
+
+            chatRoomsContainer.appendChild(roomElement);
+        });
+    }
+
     function renderChatMessages() {
         const chatMessagesContainer = document.getElementById('chatMessages');
         chatMessagesContainer.innerHTML = '';
 
         const currentRoom = chatRooms[currentRoomIndex];
         currentRoom.messages.forEach(message => {
-            const messageElement = document.createElement('div');
+                   const messageElement = document.createElement('div');
             messageElement.classList.add('message');
 
             if (message.messageText) {
@@ -217,6 +255,7 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
+
                     // Set the canvas data as the source of the preview image
                     roomAvatarPreview.src = canvas.toDataURL('image/png');
                     roomAvatarPreview.style.display = 'block';
