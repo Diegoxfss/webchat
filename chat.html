@@ -27,10 +27,10 @@
     }
     .chat-room img {
         width: 50px;
-        height: 1050px;
+        height: 50px;
         border-radius: 50%;
         margin-right: 10px;
-        object-fit: cover; /* Ensure the image covers the container */
+        object-fit: cover;
     }
     .chat-room-info {
         flex: 1;
@@ -51,10 +51,15 @@
         margin-bottom: 10px;
     }
     .message img {
-        max-width: 100%; /* Ensure images fit within their containers */
-        height: auto; /* Maintain aspect ratio */
-        display: block; /* Prevents inline image alignment issues */
-        margin-top: 5px; /* Add some spacing between messages */
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        margin-right: 10px;
+        object-fit: cover;
+    }
+    .message .user-info {
+        display: flex;
+        align-items: center;
     }
 </style>
 </head>
@@ -145,15 +150,23 @@
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
 
-            if (message.messageText) {
-                const messageTextElement = document.createElement('span');
-                messageTextElement.textContent = message.messageText;
-                messageElement.appendChild(messageTextElement);
-            }
+            const userInfo = document.createElement('div');
+            userInfo.classList.add('user-info');
 
-            if (message.imageFile) {
+            const userAvatar = document.createElement('img');
+            userAvatar.src = message.user.avatar || 'default-avatar.png';
+            userAvatar.alt = message.user.name + ' Avatar';
+
+            const messageTextElement = document.createElement('span');
+            messageTextElement.textContent = message.text;
+
+            userInfo.appendChild(userAvatar);
+            userInfo.appendChild(messageTextElement);
+            messageElement.appendChild(userInfo);
+
+            if (message.image) {
                 const imageElement = document.createElement('img');
-                imageElement.src = URL.createObjectURL(message.imageFile);
+                imageElement.src = URL.createObjectURL(message.image);
                 imageElement.alt = 'Image';
                 messageElement.appendChild(imageElement);
             }
@@ -170,16 +183,17 @@
 
         if (messageText === '' && !imageFile) return;
 
-        const currentRoom = chatRooms[currentRoomIndex];
-        const message = {
-            userId: currentRoom.messages.length, // Temporary user ID
-            userName: "Anonymous", // Temporary user name
-            messageText
+        const currentRoom = chatRooms[currentRoomIndex
+        const user = {
+            name: "Your Name", // Placeholder for user's name
+            avatar: "default-avatar.png" // Placeholder for user's avatar
         };
 
-        if (imageFile) {
-            message.imageFile = imageFile;
-        }
+        const message = {
+            user,
+            text: messageText,
+            image: imageFile
+        };
 
         currentRoom.messages.push(message);
         renderChatMessages();
@@ -187,46 +201,18 @@
         imageInput.value = null;
     }
 
-   function handleRoomAvatarUpload(event) {
-    const roomAvatarPreview = document.getElementById('roomAvatarPreview');
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const MAX_WIDTH = 50; // Maximum width for the image
-                const MAX_HEIGHT = 25; // Maximum height for the image
-                let width = img.width;
-                let height = img.height;
-
-                // Check if resizing is necessary
-                if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-                    if (width > height) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    } else {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
-                    }
-                }
-
-                // Create a canvas element to draw the resized image
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-
-                // Set the canvas data as the source of the preview image
-                roomAvatarPreview.src = canvas.toDataURL('image/png');
+    function handleRoomAvatarUpload(event) {
+        const roomAvatarPreview = document.getElementById('roomAvatarPreview');
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                roomAvatarPreview.src = event.target.result;
                 roomAvatarPreview.style.display = 'block';
             };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
+        }
     }
-}
 </script>
 </body>
 </html>
