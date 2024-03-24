@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat App</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .chat-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    .message {
+        padding: 10px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    .user1 {
+        background-color: #e1f7d5;
+        align-self: flex-start;
+    }
+    .user2 {
+        background-color: #d5e8f7;
+        align-self: flex-end;
+    }
+    .message input[type="text"] {
+        width: calc(100% - 70px);
+        padding: 5px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        margin-right: 5px;
+    }
+    .message button {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+    }
+</style>
+</head>
+<body>
+<div class="chat-container">
+    <div id="chatBox"></div>
+    <div class="message">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+<script>
+    let currentUser = prompt("Please enter your nickname:");
+    let currentUserId = Math.random().toString(36).substr(2, 9); // Generating random user id
+    let chatBox = document.getElementById('chatBox');
+
+    function sendMessage() {
+        let messageInput = document.getElementById('messageInput');
+        let messageText = messageInput.value.trim();
+        if (messageText !== '') {
+            appendMessage(currentUserId, currentUser, messageText);
+            messageInput.value = '';
+        }
+    }
+
+    function appendMessage(userId, userName, message) {
+        let messageElement = document.createElement('div');
+        messageElement.classList.add('message');
+        if (userId === currentUserId) {
+            messageElement.classList.add('user1');
+        } else {
+            messageElement.classList.add('user2');
+        }
+        messageElement.innerHTML = `<strong>${userName}:</strong> ${message}`;
+        chatBox.appendChild(messageElement);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+</script>
+</body>
+</html>
