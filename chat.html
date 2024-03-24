@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -55,15 +55,6 @@
         height: auto; /* Maintain aspect ratio */
         display: block; /* Prevents inline image alignment issues */
         margin-top: 5px; /* Add some spacing between messages */
-    }
-    .user-avatar {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-right: 5px;
-    }
-    .user-name {
-        font-weight: bold;
     }
 </style>
 </head>
@@ -154,18 +145,6 @@
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
 
-            const userAvatar = document.createElement('img');
-            userAvatar.classList.add('user-avatar');
-            userAvatar.src = message.user.avatar || 'default-user-avatar.png'; // Assuming default user avatar
-            userAvatar.alt = message.user.name + ' Avatar';
-
-            const userName = document.createElement('span');
-            userName.classList.add('user-name');
-            userName.textContent = message.user.name + ': '; // Displaying user's name before the message
-
-            messageElement.appendChild(userAvatar);
-            messageElement.appendChild(userName);
-
             if (message.messageText) {
                 const messageTextElement = document.createElement('span');
                 messageTextElement.textContent = message.messageText;
@@ -192,9 +171,9 @@
         if (messageText === '' && !imageFile) return;
 
         const currentRoom = chatRooms[currentRoomIndex];
-        const user = getUser(); // Retrieve user info
         const message = {
-            user,
+            userId: currentRoom.messages.length, // Temporary user ID
+            userName: "Anonymous", // Temporary user name
             messageText
         };
 
@@ -209,45 +188,45 @@
     }
 
     function handleRoomAvatarUpload(event) {
-        const roomAvatarPreview = document.getElementById('roomAvatarPreview');
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                                img.onload = function() {
-                    const MAX_WIDTH = 50; // Maximum width for the image
-                    const MAX_HEIGHT = 50; // Maximum height for the image
-                    let width = img.width;
-                    let height = img.height;
+    const roomAvatarPreview = document.getElementById('roomAvatarPreview');
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const MAX_WIDTH = 50; // Maximum width for the image
+                const MAX_HEIGHT = 50; // Maximum height for the image
+                let width = img.width;
+                let height = img.height;
 
-                    // Check if resizing is necessary
-                    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-                        if (width > height) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        } else {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
+                // Check if resizing is necessary
+                if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                    if (width > height) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    } else {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
                     }
+                }
 
-                    // Create a canvas element to draw the resized image
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
+                // Create a canvas element to draw the resized image
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
 
-                    // Set the canvas data as the source of the preview image
-                    roomAvatarPreview.src = canvas.toDataURL('image/png');
-                    roomAvatarPreview.style.display = 'block';
-                };
-                img.src = event.target.result;
+                // Set the canvas data as the source of the preview image
+                roomAvatarPreview.src = canvas.toDataURL('image/png');
+                roomAvatarPreview.style.display = 'block';
             };
-            reader.readAsDataURL(file);
-        }
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
     }
+}
 </script>
 </body>
 </html>
