@@ -130,54 +130,30 @@
     }
 
     function renderChatMessages() {
-        const chatMessagesContainer = document.getElementById('chatMessages');
-        chatMessagesContainer.innerHTML = '';
+    const chatMessagesContainer = document.getElementById('chatMessages');
+    chatMessagesContainer.innerHTML = '';
 
-        const currentRoom = chatRooms[currentRoomIndex];
-        currentRoom.messages.forEach(message => {
-            const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.innerHTML = `<strong>${message.userName}:</strong> ${message.messageText}`;
-            chatMessagesContainer.appendChild(messageElement);
-        });
-    }
+    const currentRoom = chatRooms[currentRoomIndex];
+    currentRoom.messages.forEach(message => {
+        const messageElement = document.createElement('div');
+        messageElement.classList.add('message');
 
-    function sendMessage() {
-        const messageInput = document.getElementById('messageInput');
-        const imageInput = document.getElementById('imageInput');
-        const messageText = messageInput.value.trim();
-        const imageFile = imageInput.files[0];
-
-        if (messageText === '' && !imageFile) return;
-
-        const currentRoom = chatRooms[currentRoomIndex];
-        const message = {
-            userId: currentRoom.messages.length, // Temporary user ID
-            userName: "Anonymous", // Temporary user name
-            messageText
-        };
-
-        if (imageFile) {
-            message.imageFile = imageFile;
+        if (message.messageText) {
+            const messageTextElement = document.createElement('span');
+            messageTextElement.textContent = message.messageText;
+            messageElement.appendChild(messageTextElement);
         }
 
-        currentRoom.messages.push(message);
-        renderChatMessages();
-        messageInput.value = '';
-        imageInput.value = null;
-    }
-
-    function handleRoomAvatarUpload(event) {
-        const roomAvatarPreview = document.getElementById('roomAvatarPreview');
-        const file = event.target.files[0];
-        if (file) {
-            roomAvatarPreview.src = URL.createObjectURL(file);
-            roomAvatarPreview.style.display = 'block';
+        if (message.imageFile) {
+            const imageElement = document.createElement('img');
+            imageElement.src = URL.createObjectURL(message.imageFile);
+            imageElement.alt = 'Image';
+            messageElement.appendChild(imageElement);
         }
-    }
 
-    // Initial rendering
-    renderChatRooms();
+        chatMessagesContainer.appendChild(messageElement);
+    });
+}
 </script>
 </body>
 </html>
