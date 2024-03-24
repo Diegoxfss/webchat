@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -218,28 +218,15 @@
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
 
-                // Get the resized image data from the canvas
-                const resizedImageData = canvas.toDataURL('image/png');
-
-                // Create a new Image element for the resized image
-                const resizedImage = new Image();
-
-                // When the resized image is loaded, set it as the source of the preview
-                resizedImage.onload = function() {
-                    // Set the resized image as the source of the preview
-                    roomAvatarPreview.src = resizedImage.src;
-                    roomAvatarPreview.style.display = 'block';
-                };
-
-                // Set the source of the resized image to the data URL
-                resizedImage.src = resizedImageData;
+                // Set the canvas data as the source of the preview image
+                roomAvatarPreview.src = canvas.toDataURL('image/png');
+                roomAvatarPreview.style.display = 'block';
             };
-            // Set the source of the reader to the uploaded file
-            reader.readAsDataURL(file);
-        }
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
     }
 }
 </script>
 </body>
 </html>
-
