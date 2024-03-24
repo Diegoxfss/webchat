@@ -61,29 +61,15 @@
 <body>
 <div class="container">
     <h2>Chat Rooms</h2>
-    <!-- User login form -->
-    <div id="loginForm">
-        <h3>User Login</h3>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-    </div>
-    <!-- User profile setup -->
-    <div id="profileSetup" style="display: none;">
-        <h3>Profile Setup</h3>
-        <input type="file" accept="image/*" id="profilePictureInput">
-        <input type="text" id="nickname" placeholder="Nickname">
-        <button onclick="setupProfile()">Save</button>
-    </div>
-    <div id="chatRooms" style="display: none;"></div>
-    <div class="create-room" id="createRoomForm" style="display: none;">
+    <div id="chatRooms"></div>
+    <div class="create-room">
         <h3>Create New Chat Room</h3>
         <input type="text" id="roomName" placeholder="Room Name">
         <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
         <textarea id="roomBio" placeholder="Room Bio"></textarea>
         <button onclick="createChatRoom()">Create Room</button>
     </div>
-    <div class="chat-container" id="chatContainer" style="display: none;">
+    <div class="chat-container" id="chatContainer">
         <h2 id="roomTitle"></h2>
         <div id="chatMessages"></div>
         <div class="message">
@@ -96,37 +82,7 @@
 <script>
     let chatRooms = [];
     let currentRoomIndex = -1; // Index of the current room being viewed
-    let currentUser = null;
 
-    // Function to handle user login
-    function login() {
-        const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
-        // Perform login authentication (you need to implement this part)
-        // For demo purposes, let's assume the login is successful
-        // After successful login, show profile setup form
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('profileSetup').style.display = 'block';
-    }
-
-    // Function to handle user profile setup
-    function setupProfile() {
-        const nickname = document.getElementById('nickname').value.trim();
-        const profilePicture = document.getElementById('profilePictureInput').files[0];
-        // Perform profile setup (you need to implement this part)
-        // For demo purposes, let's assume the setup is successful
-        // After successful profile setup, show chat rooms
-        document.getElementById('profileSetup').style.display = 'none';
-        document.getElementById('chatRooms').style.display = 'block';
-        // Save current user information
-        currentUser = {
-            nickname: nickname,
-            profilePicture: profilePicture
-        };
-        renderChatRooms();
-    }
-
-    // Function to render chat rooms
     function renderChatRooms() {
         const chatRoomsContainer = document.getElementById('chatRooms');
         chatRoomsContainer.innerHTML = '';
@@ -151,7 +107,6 @@
         });
     }
 
-    // Function to create a new chat room
     function createChatRoom() {
         const roomName = document.getElementById('roomName').value.trim();
         const roomBio = document.getElementById('roomBio').value.trim();
@@ -173,7 +128,6 @@
         renderChatRooms();
     }
 
-    // Function to enter a chat room
     function enterChatRoom(index) {
         currentRoomIndex = index;
         const currentRoom = chatRooms[currentRoomIndex];
@@ -182,7 +136,6 @@
         document.getElementById('chatContainer').style.display = 'block';
     }
 
-    // Function to render chat messages
     function renderChatMessages() {
         const chatMessagesContainer = document.getElementById('chatMessages');
         chatMessagesContainer.innerHTML = '';
@@ -192,25 +145,10 @@
             const messageElement = document.createElement('div');
             messageElement.classList.add('message');
 
-                     if (message.messageText) {
+            if (message.messageText) {
                 const messageTextElement = document.createElement('span');
                 messageTextElement.textContent = message.messageText;
                 messageElement.appendChild(messageTextElement);
-            }
-
-            if (message.userProfilePicture) {
-                const userProfilePicture = document.createElement('img');
-                userProfilePicture.src = URL.createObjectURL(message.userProfilePicture);
-                userProfilePicture.alt = message.userName + ' Profile Picture';
-                userProfilePicture.classList.add('profile-picture');
-                messageElement.appendChild(userProfilePicture);
-            }
-
-            if (message.userName) {
-                const userNameElement = document.createElement('span');
-                userNameElement.textContent = message.userName + ": ";
-                userNameElement.classList.add('user-name');
-                messageElement.appendChild(userNameElement);
             }
 
             if (message.imageFile) {
@@ -224,7 +162,6 @@
         });
     }
 
-    // Function to send a message
     function sendMessage() {
         const messageInput = document.getElementById('messageInput');
         const imageInput = document.getElementById('imageInput');
@@ -235,10 +172,9 @@
 
         const currentRoom = chatRooms[currentRoomIndex];
         const message = {
-            userId: currentUser.userId, // Use the current user's ID
-            userName: currentUser.nickname, // Include user's nickname
-            userProfilePicture: currentUser.profilePicture, // Include user's profile picture
-            messageText: messageText
+            userId: currentRoom.messages.length, // Temporary user ID
+            userName: "Anonymous", // Temporary user name
+            messageText
         };
 
         if (imageFile) {
@@ -251,47 +187,58 @@
         imageInput.value = null;
     }
 
-    // Function to handle room avatar upload
     function handleRoomAvatarUpload(event) {
-        const roomAvatarPreview = document.getElementById('roomAvatarPreview');
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    const MAX_WIDTH = 50; // Maximum width for the image
-                    const MAX_HEIGHT = 50; // Maximum height for the image
-                    let width = img.width;
-                    let height = img.height;
+    const roomAvatarPreview = document.getElementById('roomAvatarPreview');
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                const MAX_WIDTH = 50; // Maximum width for the image
+                const MAX_HEIGHT = 50; // Maximum height for the image
+                let width = img.width;
+                let height = img.height;
 
-                    // Check if resizing is necessary
-                    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-                        if (width > height) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        } else {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
+                // Check if resizing is necessary
+                if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                    if (width > height) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    } else {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
                     }
+                }
 
-                    // Create a canvas element to draw the resized image
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
+                // Create a canvas element to draw the resized image
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
 
-                    // Set the canvas data as the source of the preview image
-                    roomAvatarPreview.src = canvas.toDataURL('image/png');
+                // Get the resized image data from the canvas
+                const resizedImageData = canvas.toDataURL('image/png');
+
+                // Create a new Image element for the resized image
+                const resizedImage = new Image();
+
+                // When the resized image is loaded, set it as the source of the preview
+                resizedImage.onload = function() {
+                    // Set the resized image as the source of the preview
+                    roomAvatarPreview.src = resizedImage.src;
                     roomAvatarPreview.style.display = 'block';
                 };
-                img.src = event.target.result;
+
+                // Set the source of the resized image to the data URL
+                resizedImage.src = resizedImageData;
             };
+            // Set the source of the reader to the uploaded file
             reader.readAsDataURL(file);
         }
     }
+}
 </script>
 </body>
 </html>
