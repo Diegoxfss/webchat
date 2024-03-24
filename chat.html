@@ -27,7 +27,7 @@
     }
     .chat-room img {
         width: 50px;
-        height: 1050px;
+        height: 50px;
         border-radius: 50%;
         margin-right: 10px;
         object-fit: cover; /* Ensure the image covers the container */
@@ -187,7 +187,7 @@
         imageInput.value = null;
     }
 
-   function handleRoomAvatarUpload(event) {
+    function handleRoomAvatarUpload(event) {
     const roomAvatarPreview = document.getElementById('roomAvatarPreview');
     const file = event.target.files[0];
     if (file) {
@@ -196,7 +196,7 @@
             const img = new Image();
             img.onload = function() {
                 const MAX_WIDTH = 50; // Maximum width for the image
-                const MAX_HEIGHT = 25; // Maximum height for the image
+                const MAX_HEIGHT = 50; // Maximum height for the image
                 let width = img.width;
                 let height = img.height;
 
