@@ -16,16 +16,6 @@
         margin: 0 auto;
         padding: 20px;
     }
-    .login-container {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-    .login-container input[type="email"],
-    .login-container input[type="password"],
-    .login-container input[type="text"],
-    .login-container button {
-        margin-bottom: 10px;
-    }
     .chat-room {
         display: flex;
         align-items: center;
@@ -70,28 +60,17 @@
 </head>
 <body>
 <div class="container">
-    <div class="login-container">
-        <h2>Login</h2>
-        <input type="email" id="emailInput" placeholder="Email">
-        <input type="password" id="passwordInput" placeholder="Password">
-        <button onclick="login()">Login</button>
+    <h2>Chat Rooms</h2>
+    <div id="chatRooms"></div>
+    <div class="create-room">
+        <h3>Create New Chat Room</h3>
+        <input type="text" id="roomName" placeholder="Room Name">
+        <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
+        <textarea id="roomBio" placeholder="Room Bio"></textarea>
+        <button onclick="createChatRoom()">Create Room</button>
     </div>
-    <div id="profileInfo" style="display: none;">
-        <h2>Create Profile</h2>
-        <input type="text" id="nicknameInput" placeholder="Nickname">
-        <input type="file" accept="image/*" id="avatarInput">
-        <button onclick="createProfile()">Create Profile</button>
-    </div>
-    <div class="chat-container" id="chatContainer" style="display: none;">
-        <h2>Chat Rooms</h2>
-        <div id="chatRooms"></div>
-        <div class="create-room">
-            <h3>Create New Chat Room</h3>
-            <input type="text" id="roomName" placeholder="Room Name">
-            <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
-            <textarea id="roomBio" placeholder="Room Bio"></textarea>
-            <button onclick="createChatRoom()">Create Room</button>
-        </div>
+    <div class="chat-container" id="chatContainer">
+        <h2 id="roomTitle"></h2>
         <div id="chatMessages"></div>
         <div class="message">
             <input type="text" id="messageInput" placeholder="Type your message...">
@@ -104,21 +83,28 @@
     let chatRooms = [];
     let currentRoomIndex = -1; // Index of the current room being viewed
 
-    function login() {
-        // Perform login logic here
-        // For simplicity, let's just assume login is successful
-        document.getElementById('profileInfo').style.display = 'block';
-        document.getElementById('chatContainer').style.display = 'block';
-    }
+    function renderChatRooms() {
+        const chatRoomsContainer = document.getElementById('chatRooms');
+        chatRoomsContainer.innerHTML = '';
 
-    function createProfile() {
-        const nickname = document.getElementById('nicknameInput').value.trim();
-        const avatar = document.getElementById('avatarInput').files[0];
+        chatRooms.forEach((room, index) => {
+            const roomElement = document.createElement('div');
+            roomElement.classList.add('chat-room');
+            roomElement.onclick = () => enterChatRoom(index);
 
-        // Perform profile creation logic here
-        // For simplicity, let's just assume profile creation is successful
+            const roomAvatar = document.createElement('img');
+            roomAvatar.src = room.avatar || 'default-room-avatar.png';
+            roomAvatar.alt = room.name + ' Avatar';
 
-        document.getElementById('profileInfo').style.display = 'none';
+            const roomInfo = document.createElement('div');
+            roomInfo.classList.add('chat-room-info');
+            roomInfo.innerHTML = `<strong>${room.name}</strong><br>${room.bio}`;
+
+            roomElement.appendChild(roomAvatar);
+            roomElement.appendChild(roomInfo);
+
+            chatRoomsContainer.appendChild(roomElement);
+        });
     }
 
     function createChatRoom() {
@@ -150,122 +136,30 @@
         document.getElementById('chatContainer').style.display = 'block';
     }
 
-    function renderChatRooms() {
-        const chatRoomsContainer = document.getElementById('chatRooms');
-        chatRoomsContainer.innerHTML = '';
-
-        chatRooms.forEach((room, index) => {
-            const roomElement = document.createElement('div');
-            roomElement.classList.add('chat-room');
-            roomElement.onclick = () => enterChatRoom(index);
-
-            const roomAvatar = document.createElement('img');
-            roomAvatar.src = room.avatar || 'default-room-avatar.png';
-            roomAvatar.alt = room.name + ' Avatar';
-
-            const roomInfo = document.createElement('div');
-            roomInfo.classList.add('chat-room-info');
-            roomInfo.innerHTML = `<strong>${room.name}</strong><br>${room.bio}`;
-
-            roomElement.appendChild(roomAvatar);
-            roomElement.appendChild(roomInfo);
-
-            chatRoomsContainer.appendChild(roomElement);
-        });
-    }
-
     function renderChatMessages() {
         const chatMessagesContainer = document.getElementById('chatMessages');
         chatMessagesContainer.innerHTML = '';
 
         const currentRoom = chatRooms[currentRoomIndex];
-        currentRoom.messages.forEach(message => {
-                   const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
+currentRoom.messages.forEach(message => {
+    const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
 
-            if (message.messageText) {
-                const messageTextElement = document.createElement('span');
-                messageTextElement.textContent = message.messageText;
-                messageElement.appendChild(messageTextElement);
-            }
-
-            if (message.imageFile) {
-                const imageElement = document.createElement('img');
-                imageElement.src = URL.createObjectURL(message.imageFile);
-                imageElement.alt = 'Image';
-                messageElement.appendChild(imageElement);
-            }
-
-            chatMessagesContainer.appendChild(messageElement);
-        });
+    if (message.messageText) {
+        const messageTextElement = document.createElement('span');
+        messageTextElement.textContent = message.messageText;
+        messageElement.appendChild(messageTextElement);
     }
 
-    function sendMessage() {
-        const messageInput = document.getElementById('messageInput');
-        const imageInput = document.getElementById('imageInput');
-        const messageText = messageInput.value.trim();
-        const imageFile = imageInput.files[0];
-
-        if (messageText === '' && !imageFile) return;
-
-        const currentRoom = chatRooms[currentRoomIndex];
-        const message = {
-            userId: currentRoom.messages.length, // Temporary user ID
-            userName: "Anonymous", // Temporary user name
-            messageText
-        };
-
-        if (imageFile) {
-            message.imageFile = imageFile;
-        }
-
-        currentRoom.messages.push(message);
-        renderChatMessages();
-        messageInput.value = '';
-        imageInput.value = null;
+    if (message.imageFile) {
+        const imageElement = document.createElement('img');
+        imageElement.src = URL.createObjectURL(message.imageFile);
+        imageElement.alt = 'Image';
+        messageElement.appendChild(imageElement);
     }
 
-    function handleRoomAvatarUpload(event) {
-        const roomAvatarPreview = document.getElementById('roomAvatarPreview');
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const img = new Image();
-                img.onload = function() {
-                    const MAX_WIDTH = 50; // Maximum width for the image
-                    const MAX_HEIGHT = 50; // Maximum height for the image
-                    let width = img.width;
-                    let height = img.height;
-
-                    // Check if resizing is necessary
-                    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-                        if (width > height) {
-                            height *= MAX_WIDTH / width;
-                            width = MAX_WIDTH;
-                        } else {
-                            width *= MAX_HEIGHT / height;
-                            height = MAX_HEIGHT;
-                        }
-                    }
-
-                    // Create a canvas element to draw the resized image
-                    const canvas = document.createElement('canvas');
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
-
-                    // Set the canvas data as the source of the preview image
-                    roomAvatarPreview.src = canvas.toDataURL('image/png');
-                    roomAvatarPreview.style.display = 'block';
-                };
-                img.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-</script>
+    chatMessagesContainer.appendChild(messageElement);
+});
+        </script>
 </body>
 </html>
-
