@@ -3,106 +3,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat App</title>
+<title>Chat Rooms</title>
 <style>
     body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
     }
-    .chat-container {
+    .container {
         width: 100%;
         max-width: 800px;
         margin: 0 auto;
         padding: 20px;
     }
-    .message-container {
+    .chat-room {
         display: flex;
-        align-items: flex-start;
+        align-items: center;
+        padding: 10px;
         margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        cursor: pointer;
     }
-    .avatar {
+    .chat-room img {
         width: 50px;
         height: 50px;
         border-radius: 50%;
         margin-right: 10px;
     }
-    .message-content {
-        background-color: #f2f2f2;
-        padding: 10px;
-        border-radius: 10px;
+    .chat-room-info {
+        flex: 1;
     }
-    .user-info {
-        font-weight: bold;
-        margin-bottom: 5px;
+    .create-room {
+        margin-top: 20px;
+        text-align: center;
     }
-    .message-actions {
-        margin-top: 5px;
-    }
-    .comment {
-        margin-bottom: 5px;
+    .create-room input[type="text"],
+    .create-room textarea,
+    .create-room button {
+        margin-bottom: 10px;
     }
 </style>
 </head>
 <body>
-<div class="chat-container">
-    <div id="chatBox"></div>
-    <div class="message-input">
-        <input type="text" id="messageInput" placeholder="Type your message...">
-        <input type="file" id="avatarInput" accept="image/*">
-        <button onclick="sendMessage()">Send</button>
+<div class="container">
+    <h2>Chat Rooms</h2>
+    <div id="chatRooms"></div>
+    <div class="create-room">
+        <h3>Create New Chat Room</h3>
+        <input type="text" id="roomName" placeholder="Room Name">
+        <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
+        <textarea id="roomBio" placeholder="Room Bio"></textarea>
+        <button onclick="createChatRoom()">Create Room</button>
     </div>
 </div>
 <script>
-    let currentUser = prompt("Please enter your nickname:");
-    let currentUserId = Math.random().toString(36).substr(2, 9); // Generating random user id
-    let chatBox = document.getElementById('chatBox');
+    let chatRooms = [];
 
-    function sendMessage() {
-        let messageInput = document.getElementById('messageInput');
-        let messageText = messageInput.value.trim();
-        let avatarInput = document.getElementById('avatarInput');
-        let avatar = avatarInput.files[0];
-        
-        if (messageText !== '') {
-            appendMessage(currentUserId, currentUser, messageText, avatar);
-            messageInput.value = '';
-            avatarInput.value = '';
+    function renderChatRooms() {
+        const chatRoomsContainer = document.getElementById('chatRooms');
+        chatRoomsContainer.innerHTML = '';
+
+        chatRooms.forEach(room => {
+            const roomElement = document.createElement('div');
+            roomElement.classList.add('chat-room');
+            roomElement.onclick = () => joinRoom(room);
+
+            const roomAvatar = document.createElement('img');
+            roomAvatar.src = room.avatar || 'default-room-avatar.png';
+            roomAvatar.alt = room.name + ' Avatar';
+
+            const roomInfo = document.createElement('div');
+            roomInfo.classList.add('chat-room-info');
+            roomInfo.innerHTML = `<strong>${room.name}</strong><br>${room.bio}`;
+
+            roomElement.appendChild(roomAvatar);
+            roomElement.appendChild(roomInfo);
+
+            chatRoomsContainer.appendChild(roomElement);
+        });
+    }
+
+    function createChatRoom() {
+        const roomName = document.getElementById('roomName').value.trim();
+        const roomBio = document.getElementById('roomBio').value.trim();
+        const roomAvatar = document.getElementById('roomAvatarInput').files[0];
+
+        if (!roomName || !roomBio || !roomAvatar) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        const newRoom = {
+            name: roomName,
+            bio: roomBio,
+            avatar: URL.createObjectURL(roomAvatar)
+        };
+
+        chatRooms.push(newRoom);
+        renderChatRooms();
+    }
+
+    function joinRoom(room) {
+        alert(`Joining ${room.name} room`);
+        // Implement joining the room functionality here
+    }
+
+    function handleRoomAvatarUpload(event) {
+        const roomAvatarPreview = document.getElementById('roomAvatarPreview');
+        const file = event.target.files[0];
+        if (file) {
+            roomAvatarPreview.src = URL.createObjectURL(file);
+            roomAvatarPreview.style.display = 'block';
         }
     }
 
-    function appendMessage(userId, userName, message, avatar) {
-        let messageContainer = document.createElement('div');
-        messageContainer.classList.add('message-container');
-        
-        let avatarElement = document.createElement('img');
-        avatarElement.classList.add('avatar');
-        if (avatar) {
-            avatarElement.src = URL.createObjectURL(avatar);
-        } else {
-            avatarElement.src = 'default_avatar.jpg'; // Default avatar image
-        }
-        avatarElement.alt = userName + "'s Avatar";
-        
-        let messageContent = document.createElement('div');
-        messageContent.classList.add('message-content');
-        
-        let userInfo = document.createElement('div');
-        userInfo.classList.add('user-info');
-        userInfo.textContent = userName;
-        
-        let messageText = document.createElement('div');
-        messageText.textContent = message;
-        
-        messageContent.appendChild(userInfo);
-        messageContent.appendChild(messageText);
-        
-        messageContainer.appendChild(avatarElement);
-        messageContainer.appendChild(messageContent);
-        
-        chatBox.appendChild(messageContainer);
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
+    // Initial rendering
+    renderChatRooms();
 </script>
 </body>
 </html>
