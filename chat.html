@@ -152,8 +152,8 @@
 
         const currentRoom = chatRooms[currentRoomIndex];
         const message = {
-            userId: currentUserId,
-            userName: currentUser,
+            userId: currentRoom.messages.length, // Temporary user ID
+            userName: "Anonymous", // Temporary user name
             messageText
         };
 
