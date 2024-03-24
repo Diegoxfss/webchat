@@ -27,7 +27,7 @@
     }
     .chat-room img {
         width: 50px;
-        height: 1050px;
+        height: 50px;
         border-radius: 50%;
         margin-right: 10px;
         object-fit: cover; /* Ensure the image covers the container */
@@ -143,90 +143,51 @@
         const currentRoom = chatRooms[currentRoomIndex];
         currentRoom.messages.forEach(message => {
             const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
+                     messageElement.classList.add('message');
 
-            if (message.messageText) {
+            // Create a container for the message sender's avatar
+            const avatarContainer = document.createElement('div');
+            avatarContainer.classList.add('avatar-container');
+
+            // Create the message sender's avatar
+            const senderAvatar = document.createElement('img');
+            senderAvatar.src = message.user.avatar;
+            senderAvatar.alt = message.user.name + ' Avatar';
+            senderAvatar.classList.add('sender-avatar');
+
+            // Append the avatar to the avatar container
+            avatarContainer.appendChild(senderAvatar);
+
+            // Append the avatar container to the message element
+            messageElement.appendChild(avatarContainer);
+
+            // Create a container for the message content
+            const messageContentContainer = document.createElement('div');
+            messageContentContainer.classList.add('message-content-container');
+
+            // If the message contains text, create and append a text element
+            if (message.text) {
                 const messageTextElement = document.createElement('span');
-                messageTextElement.textContent = message.messageText;
-                messageElement.appendChild(messageTextElement);
+                messageTextElement.textContent = message.text;
+                messageContentContainer.appendChild(messageTextElement);
             }
 
-            if (message.imageFile) {
+            // If the message contains an image, create and append an image element
+            if (message.image) {
                 const imageElement = document.createElement('img');
-                imageElement.src = URL.createObjectURL(message.imageFile);
+                imageElement.src = URL.createObjectURL(message.image);
                 imageElement.alt = 'Image';
-                messageElement.appendChild(imageElement);
+                imageElement.classList.add('message-image');
+                messageContentContainer.appendChild(imageElement);
             }
 
+            // Append the message content container to the message element
+            messageElement.appendChild(messageContentContainer);
+
+            // Append the message element to the chat messages container
             chatMessagesContainer.appendChild(messageElement);
         });
-    }
-
-    function sendMessage() {
-        const messageInput = document.getElementById('messageInput');
-        const imageInput = document.getElementById('imageInput');
-        const messageText = messageInput.value.trim();
-        const imageFile = imageInput.files[0];
-
-        if (messageText === '' && !imageFile) return;
-
-        const currentRoom = chatRooms[currentRoomIndex];
-        const message = {
-            userId: currentRoom.messages.length, // Temporary user ID
-            userName: "Anonymous", // Temporary user name
-            messageText
-        };
-
-        if (imageFile) {
-            message.imageFile = imageFile;
-        }
-
-        currentRoom.messages.push(message);
-        renderChatMessages();
-        messageInput.value = '';
-        imageInput.value = null;
-    }
-
-   function handleRoomAvatarUpload(event) {
-    const roomAvatarPreview = document.getElementById('roomAvatarPreview');
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const MAX_WIDTH = 50; // Maximum width for the image
-                const MAX_HEIGHT = 25; // Maximum height for the image
-                let width = img.width;
-                let height = img.height;
-
-                // Check if resizing is necessary
-                if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-                    if (width > height) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    } else {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
-                    }
-                }
-
-                // Create a canvas element to draw the resized image
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-
-                // Set the canvas data as the source of the preview image
-                roomAvatarPreview.src = canvas.toDataURL('image/png');
-                roomAvatarPreview.style.display = 'block';
-            };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
-}
-</script>
+        </script>
 </body>
 </html>
+
