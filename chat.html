@@ -12,81 +12,97 @@
     }
     .chat-container {
         width: 100%;
-        max-width: 600px;
+        max-width: 800px;
         margin: 0 auto;
         padding: 20px;
     }
-    .message {
+    .message-container {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         margin-bottom: 10px;
     }
-    .message .user-avatar {
+    .avatar {
         width: 50px;
         height: 50px;
         border-radius: 50%;
         margin-right: 10px;
     }
-    .message .user-info {
-        flex-grow: 1;
-    }
-    .message .user-info .user-name {
-        font-weight: bold;
-    }
-    .message .message-text {
-        background-color: #f0f0f0;
+    .message-content {
+        background-color: #f2f2f2;
         padding: 10px;
-        border-radius: 5px;
+        border-radius: 10px;
+    }
+    .user-info {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+    .message-actions {
+        margin-top: 5px;
+    }
+    .comment {
+        margin-bottom: 5px;
     }
 </style>
 </head>
 <body>
-<div class="chat-container" id="chatContainer">
-</div>
-<div>
-    <input type="file" id="fileInput" accept="image/*">
-    <button onclick="uploadAvatar()">Upload Avatar</button>
+<div class="chat-container">
+    <div id="chatBox"></div>
+    <div class="message-input">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <input type="file" id="avatarInput" accept="image/*">
+        <button onclick="sendMessage()">Send</button>
+    </div>
 </div>
 <script>
-    const users = {};
+    let currentUser = prompt("Please enter your nickname:");
+    let currentUserId = Math.random().toString(36).substr(2, 9); // Generating random user id
+    let chatBox = document.getElementById('chatBox');
 
-    function appendMessage(user, message) {
-        const chatContainer = document.getElementById('chatContainer');
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-        messageElement.innerHTML = `
-            <img src="${user.avatar}" alt="User Avatar" class="user-avatar">
-            <div class="user-info">
-                <span class="user-name">${user.name}</span>: 
-                <span class="message-text">${message}</span>
-            </div>`;
-        chatContainer.appendChild(messageElement);
-    }
-
-    function uploadAvatar() {
-        const fileInput = document.getElementById('fileInput');
-        const file = fileInput.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const avatarUrl = event.target.result;
-                const userId = '_' + Math.random().toString(36).substr(2, 9);
-                users[userId] = { name: 'User', avatar: avatarUrl };
-                console.log('Avatar uploaded successfully');
-            };
-            reader.readAsDataURL(file);
+    function sendMessage() {
+        let messageInput = document.getElementById('messageInput');
+        let messageText = messageInput.value.trim();
+        let avatarInput = document.getElementById('avatarInput');
+        let avatar = avatarInput.files[0];
+        
+        if (messageText !== '') {
+            appendMessage(currentUserId, currentUser, messageText, avatar);
+            messageInput.value = '';
+            avatarInput.value = '';
         }
     }
 
-    // Example usage:
-    // For demonstration purposes, let's simulate sending a message after uploading the avatar
-    setTimeout(function() {
-        uploadAvatar();
-        setTimeout(function() {
-            const userId = Object.keys(users)[0];
-            appendMessage(users[userId], 'Hello, world!');
-        }, 2000);
-    }, 2000);
+    function appendMessage(userId, userName, message, avatar) {
+        let messageContainer = document.createElement('div');
+        messageContainer.classList.add('message-container');
+        
+        let avatarElement = document.createElement('img');
+        avatarElement.classList.add('avatar');
+        if (avatar) {
+            avatarElement.src = URL.createObjectURL(avatar);
+        } else {
+            avatarElement.src = 'default_avatar.jpg'; // Default avatar image
+        }
+        avatarElement.alt = userName + "'s Avatar";
+        
+        let messageContent = document.createElement('div');
+        messageContent.classList.add('message-content');
+        
+        let userInfo = document.createElement('div');
+        userInfo.classList.add('user-info');
+        userInfo.textContent = userName;
+        
+        let messageText = document.createElement('div');
+        messageText.textContent = message;
+        
+        messageContent.appendChild(userInfo);
+        messageContent.appendChild(messageText);
+        
+        messageContainer.appendChild(avatarElement);
+        messageContainer.appendChild(messageContent);
+        
+        chatBox.appendChild(messageContainer);
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
 </script>
 </body>
 </html>
