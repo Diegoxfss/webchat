@@ -61,32 +61,15 @@
 <body>
 <div class="container">
     <h2>Chat Rooms</h2>
-    <!-- User login form -->
-    <div id="loginForm">
-        <h3>User Login</h3>
-        <input type="email" id="email" placeholder="Email">
-        <input type="password" id="password" placeholder="Password">
-        <button onclick="login()">Login</button>
-    </div>
-    <!-- User profile setup -->
-    <div id="profileSetup" style="display: none;">
-        <h3>Profile Setup</h3>
-        <input type="file" accept="image/*" id="profilePictureInput" onchange="handleProfilePictureUpload(event)">
-        <input type="text" id="nickname" placeholder="Nickname">
-        <button onclick="setupProfile()">Save</button>
-    </div>
-    <!-- Chat rooms -->
-    <div id="chatRooms" style="display: none;"></div>
-    <!-- Create room form -->
-    <div class="create-room" id="createRoomForm" style="display: none;">
+    <div id="chatRooms"></div>
+    <div class="create-room">
         <h3>Create New Chat Room</h3>
         <input type="text" id="roomName" placeholder="Room Name">
         <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
         <textarea id="roomBio" placeholder="Room Bio"></textarea>
         <button onclick="createChatRoom()">Create Room</button>
     </div>
-    <!-- Chat container -->
-    <div class="chat-container" id="chatContainer" style="display: none;">
+    <div class="chat-container" id="chatContainer">
         <h2 id="roomTitle"></h2>
         <div id="chatMessages"></div>
         <div class="message">
@@ -154,6 +137,28 @@
         });
     }
 
+    // Function to create a new chat room
+    function createChatRoom() {
+        const roomName = document.getElementById('roomName').value.trim();
+        const roomBio = document.getElementById('roomBio').value.trim();
+        const roomAvatar = document.getElementById('roomAvatarInput').files[0];
+
+        if (!roomName || !roomBio || !roomAvatar) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        const newRoom = {
+            name: roomName,
+            bio: roomBio,
+            avatar: URL.createObjectURL(roomAvatar),
+            messages: []
+        };
+
+        chatRooms.push(newRoom);
+        renderChatRooms();
+    }
+
     // Function to enter a chat room
     function enterChatRoom(index) {
         currentRoomIndex = index;
@@ -175,7 +180,7 @@
 
             if (message.messageText) {
                 const messageTextElement = document.createElement('span');
-                messageTextElement.textContent = `${message.userNickname}: ${message.messageText}`; // Display user nickname with message
+                messageTextElement.textContent = message.messageText;
                 messageElement.appendChild(messageTextElement);
             }
 
@@ -190,47 +195,33 @@
         });
     }
 
-   
-// Function to send a message
-function sendMessage() {
-    const messageInput = document.getElementById('messageInput');
-    const imageInput = document.getElementById('imageInput');
-    const messageText = messageInput.value.trim();
-    const imageFile = imageInput.files[0];
+    // Function to send a message
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const imageInput = document.getElementById('imageInput');
+        const messageText = messageInput.value.trim();
+        const imageFile = imageInput.files[0];
 
-    if (messageText === '' && !imageFile) return;
+        if (messageText === '' && !imageFile) return;
 
-    const currentRoom = chatRooms[currentRoomIndex];
-    const message = {
-        userId: currentUser.userId, // Use the current user's ID (you need to implement user authentication)
-        userNickname: currentUser.nickname, // Include user's nickname
-        userProfilePicture: currentUser.profilePicture, // Include user's profile picture
-        messageText: messageText
-    };
-
-    if (imageFile) {
-        message.imageFile = imageFile;
-    }
-
-    currentRoom.messages.push(message);
-    renderChatMessages();
-    messageInput.value = '';
-    imageInput.value = null;
-}
-    // Function to handle profile picture upload
-function handleProfilePictureUpload(event) {
-    const profilePicturePreview = document.getElementById('profilePicturePreview');
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            profilePicturePreview.src = event.target.result;
-            profilePicturePreview.style.display = 'block';
+        const currentRoom = chatRooms[currentRoomIndex];
+        const message = {
+            userId: currentUser.userId, // Use the current user's ID (you need to implement user
+            userName: currentUser.nickname, // Include user's nickname
+            userProfilePicture: currentUser.profilePicture, // Include user's profile picture
+            messageText: messageText
         };
-        reader.readAsDataURL(file);
-    }
-}
 
+        if (imageFile) {
+            message.imageFile = imageFile;
+        }
+
+        currentRoom.messages.push(message);
+        renderChatMessages();
+        messageInput.value = '';
+        imageInput.value = null;
+    }
 </script>
 </body>
 </html>
+
