@@ -154,10 +154,12 @@
         const message = {
             userId: currentUserId,
             userName: currentUser,
-            messageText,
-            userAvatar: currentUserAvatar,
-            imageFile
+            messageText
         };
+
+        if (imageFile) {
+            message.imageFile = imageFile;
+        }
 
         currentRoom.messages.push(message);
         renderChatMessages();
