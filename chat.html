@@ -1,4 +1,4 @@
-https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -61,15 +61,32 @@ https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
 <body>
 <div class="container">
     <h2>Chat Rooms</h2>
-    <div id="chatRooms"></div>
-    <div class="create-room">
+    <!-- User login form -->
+    <div id="loginForm">
+        <h3>User Login</h3>
+        <input type="email" id="email" placeholder="Email">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">Login</button>
+    </div>
+    <!-- User profile setup -->
+    <div id="profileSetup" style="display: none;">
+        <h3>Profile Setup</h3>
+        <input type="file" accept="image/*" id="profilePictureInput" onchange="handleProfilePictureUpload(event)">
+        <input type="text" id="nickname" placeholder="Nickname">
+        <button onclick="setupProfile()">Save</button>
+    </div>
+    <!-- Chat rooms -->
+    <div id="chatRooms" style="display: none;"></div>
+    <!-- Create room form -->
+    <div class="create-room" id="createRoomForm" style="display: none;">
         <h3>Create New Chat Room</h3>
         <input type="text" id="roomName" placeholder="Room Name">
         <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
         <textarea id="roomBio" placeholder="Room Bio"></textarea>
         <button onclick="createChatRoom()">Create Room</button>
     </div>
-    <div class="chat-container" id="chatContainer">
+    <!-- Chat container -->
+    <div class="chat-container" id="chatContainer" style="display: none;">
         <h2 id="roomTitle"></h2>
         <div id="chatMessages"></div>
         <div class="message">
@@ -82,7 +99,37 @@ https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
 <script>
     let chatRooms = [];
     let currentRoomIndex = -1; // Index of the current room being viewed
+    let currentUser = null;
 
+    // Function to handle user login
+    function login() {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+        // Perform login authentication (you need to implement this part)
+        // For demo purposes, let's assume the login is successful
+        // After successful login, show profile setup form
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('profileSetup').style.display = 'block';
+    }
+
+    // Function to handle user profile setup
+    function setupProfile() {
+        const nickname = document.getElementById('nickname').value.trim();
+        const profilePicture = document.getElementById('profilePictureInput').files[0];
+        // Perform profile setup (you need to implement this part)
+        // For demo purposes, let's assume the setup is successful
+        // After successful profile setup, show chat rooms
+        document.getElementById('profileSetup').style.display = 'none';
+        document.getElementById('chatRooms').style.display = 'block';
+        // Save current user information
+        currentUser = {
+            nickname: nickname,
+            profilePicture: profilePicture
+        };
+        renderChatRooms();
+    }
+
+    // Function to render chat rooms
     function renderChatRooms() {
         const chatRoomsContainer = document.getElementById('chatRooms');
         chatRoomsContainer.innerHTML = '';
@@ -107,27 +154,7 @@ https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
         });
     }
 
-    function createChatRoom() {
-        const roomName = document.getElementById('roomName').value.trim();
-        const roomBio = document.getElementById('roomBio').value.trim();
-        const roomAvatar = document.getElementById('roomAvatarInput').files[0];
-
-        if (!roomName || !roomBio || !roomAvatar) {
-            alert('Please fill in all fields');
-            return;
-        }
-
-        const newRoom = {
-            name: roomName,
-            bio: roomBio,
-            avatar: URL.createObjectURL(roomAvatar),
-            messages: []
-        };
-
-        chatRooms.push(newRoom);
-        renderChatRooms();
-    }
-
+    // Function to enter a chat room
     function enterChatRoom(index) {
         currentRoomIndex = index;
         const currentRoom = chatRooms[currentRoomIndex];
@@ -136,6 +163,7 @@ https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
         document.getElementById('chatContainer').style.display = 'block';
     }
 
+    // Function to render chat messages
     function renderChatMessages() {
         const chatMessagesContainer = document.getElementById('chatMessages');
         chatMessagesContainer.innerHTML = '';
@@ -147,7 +175,7 @@ https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
 
             if (message.messageText) {
                 const messageTextElement = document.createElement('span');
-                messageTextElement.textContent = message.messageText;
+                messageTextElement.textContent = `${message.userNickname}: ${message.messageText}`; // Display user nickname with message
                 messageElement.appendChild(messageTextElement);
             }
 
@@ -162,70 +190,32 @@ https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
         });
     }
 
-    function sendMessage() {
-        const messageInput = document.getElementById('messageInput');
-        const imageInput = document.getElementById('imageInput');
-        const messageText = messageInput.value.trim();
-        const imageFile = imageInput.files[0];
+   
+// Function to send a message
+function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const imageInput = document.getElementById('imageInput');
+    const messageText = messageInput.value.trim();
+    const imageFile = imageInput.files[0];
 
-        if (messageText === '' && !imageFile) return;
+    if (messageText === '' && !imageFile) return;
 
-        const currentRoom = chatRooms[currentRoomIndex];
-        const message = {
-            userId: currentRoom.messages.length, // Temporary user ID
-            userName: "Anonymous", // Temporary user name
-            messageText
-        };
+    const currentRoom = chatRooms[currentRoomIndex];
+    const message = {
+        userId: currentUser.userId, // Use the current user's ID (you need to implement user authentication)
+        userNickname: currentUser.nickname, // Include user's nickname
+        userProfilePicture: currentUser.profilePicture, // Include user's profile picture
+        messageText: messageText
+    };
 
-        if (imageFile) {
-            message.imageFile = imageFile;
-        }
-
-        currentRoom.messages.push(message);
-        renderChatMessages();
-        messageInput.value = '';
-        imageInput.value = null;
+    if (imageFile) {
+        message.imageFile = imageFile;
     }
 
-    function handleRoomAvatarUpload(event) {
-    const roomAvatarPreview = document.getElementById('roomAvatarPreview');
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const MAX_WIDTH = 50; // Maximum width for the image
-                const MAX_HEIGHT = 50; // Maximum height for the image
-                let width = img.width;
-                let height = img.height;
-
-                // Check if resizing is necessary
-                if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-                    if (width > height) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    } else {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
-                    }
-                }
-
-                // Create a canvas element to draw the resized image
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-
-                // Set the canvas data as the source of the preview image
-                roomAvatarPreview.src = canvas.toDataURL('image/png');
-                roomAvatarPreview.style.display = 'block';
-            };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
-    }
+    currentRoom.messages.push(message);
+    renderChatMessages();
+    messageInput.value = '';
+    imageInput.value = null;
 }
 </script>
 </body>
