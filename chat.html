@@ -1,4 +1,4 @@
-https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -40,6 +40,7 @@ https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
         text-align: center;
     }
     .create-room input[type="text"],
+    .create-room input[type="file"],
     .create-room textarea,
     .create-room button {
         margin-bottom: 10px;
@@ -188,45 +189,88 @@ https://webadmin.cardnet.hu/webadmin/login.seam<!DOCTYPE html>
     }
 
     function handleRoomAvatarUpload(event) {
-    const roomAvatarPreview = document.getElementById('roomAvatarPreview');
-    const file = event.target.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(event) {
-            const img = new Image();
-            img.onload = function() {
-                const MAX_WIDTH = 50; // Maximum width for the image
-                const MAX_HEIGHT = 50; // Maximum height for the image
-                let width = img.width;
-                let height = img.height;
+        const roomAvatarPreview = document.getElementById('roomAvatarPreview');
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const MAX_WIDTH = 50; // Maximum width for the image
+                    const MAX_HEIGHT = 50; // Maximum height for the image
+                    let width = img.width;
+                    let height = img.height;
 
-                // Check if resizing is necessary
-                if (width > MAX_WIDTH || height > MAX_HEIGHT) {
-                    if (width > height) {
-                        height *= MAX_WIDTH / width;
-                        width = MAX_WIDTH;
-                    } else {
-                        width *= MAX_HEIGHT / height;
-                        height = MAX_HEIGHT;
+                    // Check if resizing is necessary
+                    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                        if (width > height) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                                           } else {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
                     }
-                }
 
-                // Create a canvas element to draw the resized image
-                const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
+                    // Create a canvas element to draw the resized image
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
 
-                // Set the canvas data as the source of the preview image
-                roomAvatarPreview.src = canvas.toDataURL('image/png');
-                roomAvatarPreview.style.display = 'block';
+                    // Set the canvas data as the source of the preview image
+                    roomAvatarPreview.src = canvas.toDataURL('image/png');
+                    roomAvatarPreview.style.display = 'block';
+                };
+                img.src = event.target.result;
             };
-            img.src = event.target.result;
-        };
-        reader.readAsDataURL(file);
+            reader.readAsDataURL(file);
+        }
     }
-}
+
+    function handleProfileUpload(event) {
+        const profilePreview = document.getElementById('profilePreview');
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const MAX_WIDTH = 100; // Maximum width for the image
+                    const MAX_HEIGHT = 100; // Maximum height for the image
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Check if resizing is necessary
+                    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                        if (width > height) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        } else {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    // Create a canvas element to draw the resized image
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Set the canvas data as the source of the preview image
+                    profilePreview.src = canvas.toDataURL('image/png');
+                    profilePreview.style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    }
 </script>
 </body>
 </html>
+
+                           
