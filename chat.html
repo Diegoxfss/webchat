@@ -198,92 +198,96 @@
         document.getElementById('chatContainer').style.display = 'block';
     }
 
-function renderChatRooms() {
-    const chatRoomsContainer = document.getElementById('chatRooms');
-    chatRoomsContainer.innerHTML = '';
+    function renderChatRooms() {
+        const chatRoomsContainer = document.getElementById('chatRooms');
+        chatRoomsContainer.innerHTML = '';
 
-    // Check if the user is authenticated
-    if (!isAuthenticated) {
-        // If not authenticated, display a message to login/register
-        const authMessage = document.createElement('p');
-        authMessage.textContent = 'Please login or register to view chat rooms.';
-        chatRoomsContainer.appendChild(authMessage);
-        return;
+        // Check if the user is authenticated
+        if (!isAuthenticated) {
+            // If not authenticated, display a message to login/register
+            const authMessage = document.createElement('p');
+            authMessage.textContent = 'Please login or register to view chat rooms.';
+            chatRoomsContainer.appendChild(authMessage);
+            return;
+        }
+
+        // Render each chat room
+        chatRooms.forEach((room, index) => {
+            const roomElement = document.createElement('div');
+            roomElement.classList.add('chat-room');
+            roomElement.onclick = () => enterChatRoom(index);
+
+            const roomAvatar = document.createElement('img');
+            roomAvatar.src = room.avatar || 'default-room-avatar.png';
+            roomAvatar.alt = room.name + ' Avatar';
+
+            const roomInfo = document.createElement('div');
+            roomInfo.classList.add('chat-room-info');
+            roomInfo.innerHTML = `<strong>${room.name}</strong><br>${room.bio}`;
+
+            roomElement.appendChild(roomAvatar);
+            roomElement.appendChild(roomInfo);
+
+            chatRoomsContainer.appendChild(roomElement);
+        });
+
+        // Add a button to create a new chat room
+        if (isAuthenticated) {
+            const createRoomButton = document.createElement('button');
+            createRoomButton.textContent = 'Create New Chat Room';
+            createRoomButton.onclick = () => showCreateRoomForm();
+            chatRoomsContainer.appendChild(createRoomButton);
+        }
     }
 
-    // Render each chat room
-    chatRooms.forEach((room, index) => {
-        const roomElement = document.createElement('div');
-        roomElement.classList.add('chat-room');
-        roomElement.onclick = () => enterChatRoom(index);
+    function enterChatRoom(index) {
+        // Check if the user is authenticated
+        if (!isAuthenticated) {
+            alert('Please login or register to enter chat rooms.');
+            return;
+        }
 
-        const roomAvatar = document.createElement('img');
-        roomAvatar.src = room.avatar || 'default-room-avatar.png';
-        roomAvatar.alt = room.name + ' Avatar';
-
-        const roomInfo = document.createElement('div');
-        roomInfo.classList.add('chat-room-info');
-        roomInfo.innerHTML = `<strong>${room.name}</strong><br>${room.bio}`;
-
-        roomElement.appendChild(roomAvatar);
-        roomElement.appendChild(roomInfo);
-
-        chatRoomsContainer.appendChild(roomElement);
-    });
-
-    // Add a button to create a new chat room
-    if (isAuthenticated) {
-        const createRoomButton = document.createElement('button');
-        createRoomButton.textContent = 'Create New Chat Room';
-        createRoomButton.onclick = () => showCreateRoomForm();
-        chatRoomsContainer.appendChild(createRoomButton);
-    }
-}
-
-function enterChatRoom(index) {
-    // Check if the user is authenticated
-    if (!isAuthenticated) {
-        alert('Please login or register to enter chat rooms.');
-        return;
+        currentRoomIndex = index;
+        const currentRoom = chatRooms[currentRoomIndex];
+        document.getElementById('roomTitle').innerText = currentRoom.name;
+        renderChatMessages();
+        showChatContainer();
     }
 
-    currentRoomIndex = index;
-    const currentRoom = chatRooms[currentRoomIndex];
-    document.getElementById('roomTitle').innerText = currentRoom.name;
-    renderChatMessages();
-    showChatContainer();
-}
-
-function showCreateRoomForm() {
-    // Display form to create a new chat room
-    const createRoomForm = document.getElementById('createRoomForm');
-    createRoomForm.style.display = 'block';
-}
-
-function createChatRoom() {
-    const roomName = document.getElementById('roomName').value.trim();
-    const roomBio = document.getElementById('roomBio').value.trim();
-    const roomAvatar = document.getElementById('roomAvatarInput').files[0];
-
-    if (!roomName || !roomBio || !roomAvatar) {
-        alert('Please fill in all fields');
-        return;
+    function showCreateRoomForm() {
+        // Display form to create a new chat room
+        const createRoomForm = document.getElementById('createRoomForm');
+        createRoomForm.style.display = 'block';
     }
 
-    const newRoom = {
-        name: roomName,
-        bio: roomBio,
-        avatar: URL.createObjectURL(roomAvatar),
-        messages: []
-    };
+    function createChatRoom() {
+        const roomName = document.getElementById('roomName').value.trim();
+        const roomBio = document.getElementById('roomBio').value.trim();
+        const roomAvatar = document.getElementById('roomAvatarInput').files[0];
 
-    chatRooms.push(newRoom);
-    renderChatRooms();
-    hideCreateRoomForm();
-}
+        if (!roomName || !roomBio || !roomAvatar) {
+            alert('Please fill in all fields');
+            return;
+        }
 
-function hideCreateRoomForm() {
-    // Hide the create room form
-    const createRoomForm = document.getElementById('createRoomForm');
-    createRoomForm.style.display = 'none';
-}
+        const newRoom = {
+            name: roomName,
+            bio: roomBio,
+            avatar: URL.createObjectURL(roomAvatar),
+            messages: []
+        };
+
+        chatRooms.push(newRoom);
+        renderChatRooms();
+        hideCreateRoomForm();
+    }
+
+    function hideCreateRoomForm() {
+        // Hide the create room form
+        const createRoomForm = document.getElementById('createRoomForm');
+        createRoomForm.style.display = 'none';
+    }
+</script>
+</body>
+</html>
+
