@@ -40,7 +40,6 @@
         text-align: center;
     }
     .create-room input[type="text"],
-    .create-room input[type="file"],
     .create-room textarea,
     .create-room button {
         margin-bottom: 10px;
@@ -57,57 +56,28 @@
         display: block; /* Prevents inline image alignment issues */
         margin-top: 5px; /* Add some spacing between messages */
     }
-    /* New styles for authentication and profile management */
-    .auth-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-    .auth-container input[type="email"],
-    .auth-container input[type="password"],
-    .auth-container button,
-    .auth-container p {
-        margin-bottom: 10px;
-    }
 </style>
 </head>
 <body>
-<div class="container">
-    <h2>Chat Rooms</h2>
-    <div class="auth-container" id="authContainer">
-        <h3>Login</h3>
-        <input type="email" id="emailInput" placeholder="Email">
-        <input type="password" id="passwordInput" placeholder="Password">
-        <button onclick="login()">Login</button>
-        <p>Don't have an account? <a href="#" onclick="showRegistration()">Register</a></p>
-    </div>
-
-    <div class="auth-container" id="registrationContainer" style="display: none;">
-        <h3>Register</h3>
-        <input type="email" id="registerEmailInput" placeholder="Email">
-        <input type="password" id="registerPasswordInput" placeholder="Password">
-        <button onclick="register()">Register</button>
-        <p>Already have an account? <a href="#" onclick="showLogin()">Login</a></p>
-    </div>
-
-    <div class="auth-container" id="profileContainer" style="display: none;">
-        <h3>Profile</h3>
-        <input type="file" accept="image/*" id="profileAvatarInput" onchange="handleProfileUpload(event)">
-        <img id="profilePreview" style="display: none;">
-        <input type="text" id="nicknameInput" placeholder="Nickname">
-        <button onclick="updateProfile()">Save Profile</button>
-    </div>
-
-    <div class="create-room" id="createRoomForm" style="display: none;">
-    <h3>Create New Chat Room</h3>
-    <input type="text" id="roomName" placeholder="Room Name">
-    <input type="file" accept="image/*" id="roomAvatarInput" onchange="handleRoomAvatarUpload(event)">
-    <textarea id="roomBio" placeholder="Room Bio"></textarea>
-    <button onclick="createChatRoom()">Create Room</button>
+<div class="container" id="loginContainer">
+    <h2>Login</h2>
+    <input type="email" id="emailInput" placeholder="Email">
+    <input type="password" id="passwordInput" placeholder="Password">
+    <input type="file" accept="image/*" id="avatarInput">
+    <input type="text" id="nicknameInput" placeholder="Nickname">
+    <button onclick="login()">Login</button>
 </div>
-
-
-    <div class="chat-container" id="chatContainer">
+<div class="container chat-container" id="chatContainer">
+    <h2>Chat Rooms</h2>
+    <div id="chatRooms"></div>
+    <div class="create-room">
+        <h3>Create New Chat Room</h3>
+        <input type="text" id="roomName" placeholder="Room Name">
+        <input type="file" accept="image/*" id="roomAvatarInput">
+        <textarea id="roomBio" placeholder="Room Bio"></textarea>
+        <button onclick="createChatRoom()">Create Room</button>
+    </div>
+    <div id="chatRoomContent">
         <h2 id="roomTitle"></h2>
         <div id="chatMessages"></div>
         <div class="message">
@@ -118,100 +88,42 @@
     </div>
 </div>
 <script>
+    let currentUser = null;
     let chatRooms = [];
     let currentRoomIndex = -1; // Index of the current room being viewed
 
-    // Mock user authentication state (replace with actual authentication)
-    let isAuthenticated = false;
-    let currentUser = null;
-
-    // Function to simulate user login (replace with actual login functionality)
     function login() {
-        const email = document.getElementById('emailInput').value;
-        const password = document.getElementById('passwordInput').value;
+        const email = document.getElementById('emailInput').value.trim();
+        const password = document.getElementById('passwordInput').value.trim();
+        const avatarFile = document.getElementById('avatarInput').files[0];
+        const nickname = document.getElementById('nicknameInput').value.trim();
 
-        // Mock authentication: Check if email and password match
-        if (email === 'user@example.com' && password === 'password') {
-            isAuthenticated = true;
-            currentUser = {
-                email: email,
-                nickname: 'User'
-            };
-            showProfile();
-        } else {
-            alert('Invalid email or password');
+        if (!email || !password || !avatarFile || !nickname) {
+            alert('Please fill in all fields');
+            return;
         }
-    }
 
-    // Function to simulate user registration (replace with actual registration functionality)
-    function register() {
-        const email = document.getElementById('registerEmailInput').value;
-        const password = document.getElementById('registerPasswordInput').value;
+        // Here you should implement your authentication logic
+        // For simplicity, we'll assume successful login
+        currentUser = {
+            email,
+            nickname,
+            avatar: URL.createObjectURL(avatarFile)
+        };
 
-        // Mock registration: Save user data (in real app, this should be sent to server)
-        alert('Registration successful! Please login.');
-        showLogin();
-    }
-
-    // Function to update user profile (replace with actual profile update functionality)
-    function updateProfile() {
-        const nickname = document.getElementById('nicknameInput').value;
-        const avatarFile = document.getElementById('profileAvatarInput').files[0];
-
-        // Mock profile update: Save profile data (in real app, this should be sent to server)
-        currentUser.nickname = nickname;
-        alert('Profile updated successfully!');
-    }
-
-    // Function to handle profile picture upload
-    function handleProfileUpload(event) {
-        const profilePreview = document.getElementById('profilePreview');
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                profilePreview.src = event.target.result;
-                profilePreview.style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-        }
-    }
-
-    function showRegistration() {
-        document.getElementById('authContainer').style.display = 'none';
-        document.getElementById('registrationContainer').style.display = 'block';
-    }
-
-    function showLogin() {
-        document.getElementById('authContainer').style.display = 'block';
-        document.getElementById('registrationContainer').style.display = 'none';
-        document.getElementById('profileContainer').style.display = 'none';
-    }
-
-    function showProfile() {
-        document.getElementById('authContainer').style.display = 'none';
-        document.getElementById('registrationContainer').style.display = 'none';
-        document.getElementById('profileContainer').style.display = 'block';
-    }
-
-    function showChatContainer() {
+        document.getElementById('loginContainer').style.display = 'none';
         document.getElementById('chatContainer').style.display = 'block';
+        showChatRooms();
+    }
+
+    function showChatRooms() {
+        renderChatRooms();
     }
 
     function renderChatRooms() {
         const chatRoomsContainer = document.getElementById('chatRooms');
         chatRoomsContainer.innerHTML = '';
 
-        // Check if the user is authenticated
-        if (!isAuthenticated) {
-            // If not authenticated, display a message to login/register
-            const authMessage = document.createElement('p');
-            authMessage.textContent = 'Please login or register to view chat rooms.';
-            chatRoomsContainer.appendChild(authMessage);
-            return;
-        }
-
-        // Render each chat room
         chatRooms.forEach((room, index) => {
             const roomElement = document.createElement('div');
             roomElement.classList.add('chat-room');
@@ -230,34 +142,6 @@
 
             chatRoomsContainer.appendChild(roomElement);
         });
-
-        // Add a button to create a new chat room
-        if (isAuthenticated) {
-            const createRoomButton = document.createElement('button');
-            createRoomButton.textContent = 'Create New Chat Room';
-            createRoomButton.onclick = () => showCreateRoomForm();
-            chatRoomsContainer.appendChild(createRoomButton);
-        }
-    }
-
-    function enterChatRoom(index) {
-        // Check if the user is authenticated
-        if (!isAuthenticated) {
-            alert('Please login or register to enter chat rooms.');
-            return;
-        }
-
-        currentRoomIndex = index;
-        const currentRoom = chatRooms[currentRoomIndex];
-        document.getElementById('roomTitle').innerText = currentRoom.name;
-        renderChatMessages();
-        showChatContainer();
-    }
-
-    function showCreateRoomForm() {
-        // Display form to create a new chat room
-        const createRoomForm = document.getElementById('createRoomForm');
-        createRoomForm.style.display = 'block';
     }
 
     function createChatRoom() {
@@ -279,13 +163,105 @@
 
         chatRooms.push(newRoom);
         renderChatRooms();
-        hideCreateRoomForm();
     }
 
-    function hideCreateRoomForm() {
-        // Hide the create room form
-        const createRoomForm = document.getElementById('createRoomForm');
-        createRoomForm.style.display = 'none';
+    function enterChatRoom(index) {
+        currentRoomIndex = index;
+        const currentRoom = chatRooms[currentRoomIndex];
+        document.getElementById('roomTitle').innerText = currentRoom.name;
+        renderChatMessages();
+    }
+
+    function renderChatMessages() {
+        const chatMessagesContainer = document.getElementById('chatMessages');
+        chatMessagesContainer.innerHTML = '';
+
+        const currentRoom = chatRooms[currentRoomIndex];
+        currentRoom.messages.forEach(message => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+
+            if (message.messageText) {
+                const messageTextElement = document.createElement('span');
+                messageTextElement.textContent = message.messageText;
+                messageElement.appendChild(messageTextElement);
+            }
+
+            if (message.imageFile) {
+                const imageElement = document.createElement('img');
+                imageElement.src = URL.createObjectURL(message.imageFile);
+                imageElement.alt = 'Image';
+                messageElement.appendChild(imageElement);
+            }
+
+            chatMessagesContainer.appendChild(messageElement);
+        });
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const imageInput = document.getElementById('imageInput');
+        const messageText = messageInput.value.trim();
+        const imageFile = imageInput.files[0];
+
+        if (messageText === '' && !imageFile) return;
+
+        const currentRoom = chatRooms[currentRoomIndex];
+        const message = {
+            userId: currentUser.email, // Use email as unique identifier
+            userName: currentUser.nickname,
+            messageText
+        };
+
+               if (imageFile) {
+            message.imageFile = imageFile;
+        }
+
+        currentRoom.messages.push(message);
+        renderChatMessages();
+        messageInput.value = '';
+        imageInput.value = null;
+    }
+
+    function handleRoomAvatarUpload(event) {
+        const roomAvatarPreview = document.getElementById('roomAvatarPreview');
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const MAX_WIDTH = 50; // Maximum width for the image
+                    const MAX_HEIGHT = 50; // Maximum height for the image
+                    let width = img.width;
+                    let height = img.height;
+
+                    // Check if resizing is necessary
+                    if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+                        if (width > height) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        } else {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    // Create a canvas element to draw the resized image
+                    const canvas = document.createElement('canvas');
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    // Set the canvas data as the source of the preview image
+                    roomAvatarPreview.src = canvas.toDataURL('image/png');
+                    roomAvatarPreview.style.display = 'block';
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
     }
 </script>
 </body>
