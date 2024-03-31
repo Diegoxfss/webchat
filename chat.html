@@ -9,12 +9,44 @@
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
+        background-color: #f5f5f5;
     }
     .container {
         width: 100%;
         max-width: 800px;
         margin: 0 auto;
         padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h2 {
+        margin-top: 0;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+        width: calc(100% - 20px);
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+    }
+    input[type="file"] {
+        margin-bottom: 20px;
+    }
+    button {
+        padding: 10px 20px;
+        background-color: #4caf50;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
     }
     .chat-room {
         display: flex;
@@ -24,25 +56,20 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .chat-room:hover {
+        background-color: #f0f0f0;
     }
     .chat-room img {
         width: 50px;
         height: 50px;
         border-radius: 50%;
         margin-right: 10px;
-        object-fit: cover; /* Ensure the image covers the container */
+        object-fit: cover;
     }
     .chat-room-info {
         flex: 1;
-    }
-    .create-room {
-        margin-top: 20px;
-        text-align: center;
-    }
-    .create-room input[type="text"],
-    .create-room textarea,
-    .create-room button {
-        margin-bottom: 10px;
     }
     .chat-container {
         display: none;
@@ -51,10 +78,11 @@
         margin-bottom: 10px;
     }
     .message img {
-        max-width: 100%; /* Ensure images fit within their containers */
-        height: auto; /* Maintain aspect ratio */
-        display: block; /* Prevents inline image alignment issues */
-        margin-top: 5px; /* Add some spacing between messages */
+        max-width: 100%;
+        height: auto;
+        display: block;
+        margin-top: 5px;
+        border-radius: 5px;
     }
 </style>
 </head>
@@ -135,7 +163,7 @@
 
             const roomInfo = document.createElement('div');
             roomInfo.classList.add('chat-room-info');
-            roomInfo.innerHTML = `<strong>${room.name}</strong><br>${room.bio}`;
+            roomInfo.innerHTML = `<strong>${room.name}</strong><br>Created by: ${room.creatorNickname}`;
 
             roomElement.appendChild(roomAvatar);
             roomElement.appendChild(roomInfo);
@@ -158,6 +186,7 @@
             name: roomName,
             bio: roomBio,
             avatar: URL.createObjectURL(roomAvatar),
+            creatorNickname: currentUser.nickname, // Added creator nickname
             messages: []
         };
 
@@ -178,14 +207,12 @@
 
         const currentRoom = chatRooms[currentRoomIndex];
         currentRoom.messages.forEach(message => {
-            const messageElement = document.createElement('div');
+                       const messageElement = document.createElement('div');
             messageElement.classList.add('message');
 
-            if (message.messageText) {
-                const messageTextElement = document.createElement('span');
-                messageTextElement.textContent = message.messageText;
-                messageElement.appendChild(messageTextElement);
-            }
+            const messageTextElement = document.createElement('span');
+            messageTextElement.textContent = message.messageText;
+            messageElement.appendChild(messageTextElement);
 
             if (message.imageFile) {
                 const imageElement = document.createElement('img');
@@ -213,7 +240,7 @@
             messageText
         };
 
-               if (imageFile) {
+        if (imageFile) {
             message.imageFile = imageFile;
         }
 
@@ -266,4 +293,3 @@
 </script>
 </body>
 </html>
-
