@@ -84,10 +84,25 @@
         margin-top: 5px;
         border-radius: 5px;
     }
+    #profileInfo {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    #profileInfo img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
 </style>
 </head>
 <body>
 <div class="container" id="loginContainer">
+    <div id="profileInfo">
+        <img id="profileAvatar" src="default-avatar.png" alt="Profile Picture">
+        <h2 id="profileNickname">Guest</h2>
+    </div>
     <h2>Login</h2>
     <input type="email" id="emailInput" placeholder="Email">
     <input type="password" id="passwordInput" placeholder="Password">
@@ -139,6 +154,9 @@
             avatar: URL.createObjectURL(avatarFile)
         };
 
+        document.getElementById('profileAvatar').src = currentUser.avatar;
+        document.getElementById('profileNickname').innerText = currentUser.nickname;
+
         document.getElementById('loginContainer').style.display = 'none';
         document.getElementById('chatContainer').style.display = 'block';
         showChatRooms();
@@ -186,8 +204,9 @@
             name: roomName,
             bio: roomBio,
             avatar: URL.createObjectURL(roomAvatar),
-            creatorNickname: currentUser.nickname, // Added creator nickname
+            creatorNickname: currentUser.nickname,
             messages: []
+       
         };
 
         chatRooms.push(newRoom);
@@ -207,7 +226,7 @@
 
         const currentRoom = chatRooms[currentRoomIndex];
         currentRoom.messages.forEach(message => {
-                       const messageElement = document.createElement('div');
+            const messageElement = document.createElement('div');
             messageElement.classList.add('message');
 
             const messageTextElement = document.createElement('span');
@@ -235,7 +254,7 @@
 
         const currentRoom = chatRooms[currentRoomIndex];
         const message = {
-            userId: currentUser.email, // Use email as unique identifier
+            userId: currentUser.email,
             userName: currentUser.nickname,
             messageText
         };
@@ -258,12 +277,11 @@
             reader.onload = function(event) {
                 const img = new Image();
                 img.onload = function() {
-                    const MAX_WIDTH = 50; // Maximum width for the image
-                    const MAX_HEIGHT = 50; // Maximum height for the image
+                    const MAX_WIDTH = 50;
+                    const MAX_HEIGHT = 50;
                     let width = img.width;
                     let height = img.height;
 
-                    // Check if resizing is necessary
                     if (width > MAX_WIDTH || height > MAX_HEIGHT) {
                         if (width > height) {
                             height *= MAX_WIDTH / width;
@@ -274,14 +292,12 @@
                         }
                     }
 
-                    // Create a canvas element to draw the resized image
                     const canvas = document.createElement('canvas');
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    // Set the canvas data as the source of the preview image
                     roomAvatarPreview.src = canvas.toDataURL('image/png');
                     roomAvatarPreview.style.display = 'block';
                 };
