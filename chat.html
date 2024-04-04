@@ -54,9 +54,10 @@
         padding: 10px;
         margin-bottom: 10px;
         border: 1px solid #ccc;
-        border-radius: 5px;
+        border-radius: 10px;
         cursor: pointer;
-        transition: background-color 0.3s;
+        transition: background-color 0.3s, box-shadow 0.3s;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     .chat-room:hover {
         background-color: #f0f0f0;
@@ -117,6 +118,11 @@
         border-radius: 50%;
         margin-bottom: 10px;
     }
+    .grid-container {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
+    }
 </style>
 </head>
 <body>
@@ -135,7 +141,7 @@
 
 <div class="container chat-container" id="chatContainer" style="display: none;">
     <h2>Chat Rooms</h2>
-    <div id="chatRooms"></div>
+    <div class="grid-container" id="chatRooms"></div>
     <div class="create-room">
         <h3>Create New Chat Room</h3>
         <input type="text" id="roomName" placeholder="Room Name">
@@ -203,7 +209,7 @@
     }
 
     function renderChatRooms() {
-                const chatRoomsContainer = document.getElementById('chatRooms');
+        const chatRoomsContainer = document.getElementById('chatRooms');
         chatRoomsContainer.innerHTML = '';
 
         chatRooms.forEach((room, index) => {
@@ -337,3 +343,4 @@
 </script>
 </body>
 </html>
+
