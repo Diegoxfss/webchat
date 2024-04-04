@@ -83,6 +83,7 @@
         display: block;
         margin-top: 5px;
         border-radius: 5px;
+        cursor: pointer; /* Add cursor pointer for clickable images */
     }
     #profileInfo {
         display: flex;
@@ -189,7 +190,7 @@
 
             const roomAvatar = document.createElement('img');
             roomAvatar.src = room.avatar || 'default-room-avatar.png';
-            roomAvatar.alt = room.name + ' Avatar';
+                        roomAvatar.alt = room.name + ' Avatar';
 
             const roomInfo = document.createElement('div');
             roomInfo.classList.add('chat-room-info');
@@ -204,7 +205,7 @@
 
     function createChatRoom() {
         const roomName = document.getElementById('roomName').value.trim();
-              const roomBio = document.getElementById('roomBio').value.trim();
+        const roomBio = document.getElementById('roomBio').value.trim();
         const roomAvatar = document.getElementById('roomAvatarInput').files[0];
 
         if (!roomName || !roomBio || !roomAvatar) {
@@ -245,6 +246,7 @@
             userAvatar.src = message.userAvatar; // Use the sender's avatar
             userAvatar.alt = 'User Avatar';
             userAvatar.classList.add('user-avatar');
+            userAvatar.onclick = () => viewUserProfile(message.userId); // Add onclick event
 
             const userName = document.createElement('span');
             userName.textContent = message.userNickname; // Use the sender's nickname
@@ -293,6 +295,14 @@
         renderChatMessages();
         messageInput.value = '';
         imageInput.value = null;
+    }
+
+    // Function to view user profile
+    function viewUserProfile(userId) {
+        // Here you can implement the logic to fetch user profile data based on userId
+        // For demonstration, let's just alert the userId
+        alert('User ID: ' + userId);
+        // You can then display the user profile using modal or navigate to another page
     }
 </script>
 </body>
