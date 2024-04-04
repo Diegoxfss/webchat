@@ -83,7 +83,6 @@
         display: block;
         margin-top: 5px;
         border-radius: 5px;
-        cursor: pointer; /* Add cursor pointer for clickable images */
     }
     #profileInfo {
         display: flex;
@@ -95,6 +94,7 @@
         height: 50px;
         border-radius: 50%;
         margin-right: 10px;
+        cursor: pointer; /* Add cursor pointer to indicate it's clickable */
     }
     .user-avatar {
         width: 30px; /* Adjust the size as needed */
@@ -102,12 +102,27 @@
         border-radius: 50%; /* Make it round */
         margin-right: 5px; /* Adjust the spacing */
     }
+    .profile-container {
+        display: none;
+    }
+    .profile {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 5px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+    .profile img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin-bottom: 10px;
+    }
 </style>
 </head>
 <body>
 <div class="container" id="loginContainer">
     <div id="profileInfo" style="display: none;">
-        <img id="profileAvatar" src="default-avatar.png" alt="Profile Picture">
+        <img id="profileAvatar" src="default-avatar.png" alt="Profile Picture" onclick="viewProfile()">
         <h2 id="profileNickname">Guest</h2>
     </div>
     <h2>Login</h2>
@@ -136,6 +151,14 @@
             <input type="file" accept="image/*" id="imageInput">
             <button onclick="sendMessage()">Send</button>
         </div>
+    </div>
+</div>
+
+<div class="profile-container" id="profileContainer">
+    <div class="profile">
+        <img id="viewedAvatar" src="default-avatar.png" alt="Profile Picture">
+        <h2 id="viewedNickname">User</h2>
+        <p id="viewedBio">User Bio</p>
     </div>
 </div>
 
@@ -181,7 +204,7 @@
 
     function renderChatRooms() {
         const chatRoomsContainer = document.getElementById('chatRooms');
-        chatRoomsContainer.innerHTML = '';
+               chatRoomsContainer.innerHTML = '';
 
         chatRooms.forEach((room, index) => {
             const roomElement = document.createElement('div');
@@ -190,7 +213,7 @@
 
             const roomAvatar = document.createElement('img');
             roomAvatar.src = room.avatar || 'default-room-avatar.png';
-                        roomAvatar.alt = room.name + ' Avatar';
+            roomAvatar.alt = room.name + ' Avatar';
 
             const roomInfo = document.createElement('div');
             roomInfo.classList.add('chat-room-info');
@@ -246,7 +269,6 @@
             userAvatar.src = message.userAvatar; // Use the sender's avatar
             userAvatar.alt = 'User Avatar';
             userAvatar.classList.add('user-avatar');
-            userAvatar.onclick = () => viewUserProfile(message.userId); // Add onclick event
 
             const userName = document.createElement('span');
             userName.textContent = message.userNickname; // Use the sender's nickname
@@ -297,12 +319,20 @@
         imageInput.value = null;
     }
 
-    // Function to view user profile
-    function viewUserProfile(userId) {
-        // Here you can implement the logic to fetch user profile data based on userId
-        // For demonstration, let's just alert the userId
-        alert('User ID: ' + userId);
-        // You can then display the user profile using modal or navigate to another page
+    // Function to view other user's profile when clicking on their picture
+    function viewProfile() {
+        // Retrieve the viewed user's details from the message
+        const viewedUserAvatar = document.getElementById('viewedAvatar');
+        const viewedUserNickname = document.getElementById('viewedNickname');
+        const viewedUserBio = document.getElementById('viewedBio');
+
+        // Show the profile container
+        document.getElementById('profileContainer').style.display = 'block';
+
+        // Assuming the viewed user's details are hardcoded here for demonstration
+        viewedUserAvatar.src = 'other-user-avatar.png';
+        viewedUserNickname.textContent = 'Other User';
+        viewedUserBio.textContent = 'Other user\'s bio...';
     }
 </script>
 </body>
