@@ -116,6 +116,12 @@
     <input type="text" id="nicknameInput" placeholder="Nickname">
     <button onclick="login()">Login</button>
 </div>
+    <br>
+    <div class="container" id="profileInfo" style="display: none;">
+    <img id="profileAvatar" src="default-avatar.png" alt="Profile Picture">
+    <h2 id="profileNickname">Guest</h2>
+</div>
+
 <div class="container chat-container" id="chatContainer">
     <h2>Chat Rooms</h2>
     <div id="chatRooms"></div>
@@ -142,31 +148,35 @@
     let currentRoomIndex = -1; // Index of the current room being viewed
 
     function login() {
-        const email = document.getElementById('emailInput').value.trim();
-        const password = document.getElementById('passwordInput').value.trim();
-        const avatarFile = document.getElementById('avatarInput').files[0];
-        const nickname = document.getElementById('nicknameInput').value.trim();
+    const email = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
+    const avatarFile = document.getElementById('avatarInput').files[0];
+    const nickname = document.getElementById('nicknameInput').value.trim();
 
-        if (!email || !password || !avatarFile || !nickname) {
-            alert('Please fill in all fields');
-            return;
-        }
-
-        // Here you should implement your authentication logic
-        // For simplicity, we'll assume successful login
-        currentUser = {
-            email,
-            nickname,
-            avatar: URL.createObjectURL(avatarFile)
-        };
-
-        document.getElementById('profileAvatar').src = currentUser.avatar;
-        document.getElementById('profileNickname').innerText = currentUser.nickname;
-
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('chatContainer').style.display = 'block';
-        showChatRooms();
+    if (!email || !password || !avatarFile || !nickname) {
+        alert('Please fill in all fields');
+        return;
     }
+
+    // Here you should implement your authentication logic
+    // For simplicity, we'll assume successful login
+    currentUser = {
+        email,
+        nickname,
+        avatar: URL.createObjectURL(avatarFile)
+    };
+
+    // Update profile information
+    document.getElementById('profileAvatar').src = currentUser.avatar;
+    document.getElementById('profileNickname').innerText = currentUser.nickname;
+
+    // Display profile info container
+    document.getElementById('profileInfo').style.display = 'flex';
+
+    document.getElementById('loginContainer').style.display = 'none';
+    document.getElementById('chatContainer').style.display = 'block';
+    showChatRooms();
+}
 
     function showChatRooms() {
         renderChatRooms();
