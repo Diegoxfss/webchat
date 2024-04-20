@@ -140,24 +140,22 @@
 </div>
 
 <div class="container chat-container" id="chatContainer" style="display: none;">
-    <h2>Chat Rooms</h2>
-    <div class="grid-container" id="chatRooms"></div>
-    <div class="create-room">
-        <h3>Create New Chat Room</h3>
-        <input type="text" id="roomName" placeholder="Room Name">
-        <input type="file" accept="image/*" id="roomAvatarInput">
-        <textarea id="roomBio" placeholder="Room Bio"></textarea>
-        <button onclick="createChatRoom()">Create Room</button>
-    </div>
-    <div id="chatRoomContent">
-        <h2 id="roomTitle"></h2>
-        <div id="chatMessages"></div>
-        <div class="message">
-            <input type="text" id="messageInput" placeholder="Type your message...">
-            <input type="file" accept="image/*" id="imageInput">
-            <button onclick="sendMessage()">Send</button>
-        </div>
-    </div>
+    <header>
+        <h1>Simple Social Media Chat</h1>
+    </header>
+    <main>
+        <div class="chat-window" id="chatWindow"></div>
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button onclick="sendMessage()">Send</button>
+    </main>
+    <aside id="userPanel" style="display: none;">
+        <input type="file" id="fileInput" accept="image/*, .pdf, .doc, .docx">
+        <img src="" alt="Profile Picture" id="profilePic" class="profile-pic">
+        <input type="text" id="nicknameInput" placeholder="Choose a nickname">
+        <input type="text" id="bioInput" placeholder="Add a bio">
+        <button onclick="changeNickname()">Change Nickname</button>
+        <button onclick="logOff()">Log Off</button>
+    </aside>
 </div>
 
 <div class="profile-container" id="profileContainer">
@@ -339,7 +337,45 @@
         viewedUserNickname.textContent = 'Other User';
         viewedUserBio.textContent = 'Other user\'s bio...';
     }
+
+    function changeNickname() {
+        const nicknameInput = document.getElementById('nicknameInput');
+        const bioInput = document.getElementById('bioInput');
+        const nickname = nicknameInput.value.trim();
+        const bio = bioInput.value.trim();
+        if (nickname !== '') {
+            localStorage.setItem('nickname', nickname);
+            localStorage.setItem('bio', bio);
+        }
+    }
+
+    function logOff() {
+        // Your logoff logic goes here
+        // For simplicity, I'm clearing the local storage and displaying the login panel
+        localStorage.clear();
+        document.getElementById('loginContainer').style.display = 'block';
+        document.getElementById('chatContainer').style.display = 'none';
+    }
+
+    // Check if the user is already logged in
+    if (localStorage.getItem('nickname')) {
+        document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('chatContainer').style.display = 'block';
+        // Set profile picture if available
+        const profilePicUrl = localStorage.getItem('profile_picture');
+        if (profilePicUrl) {
+            document.getElementById('profilePic').src = profilePicUrl;
+        }
+        // Set nickname and bio if available
+        const nickname = localStorage.getItem('nickname');
+        const bio = localStorage.getItem('bio');
+        if (nickname) {
+            document.getElementById('nicknameInput').value = nickname;
+        }
+        if (bio) {
+            document.getElementById('bioInput').value = bio;
+        }
+    }
 </script>
 </body>
 </html>
-
