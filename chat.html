@@ -44,23 +44,23 @@
     }
 
     .profile-container {
-      text-align: center;
+      display: flex;
+      align-items: center;
       margin-bottom: 10px;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     .profile-pic {
-      width: 100px;
-      height: 100px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      margin: 0 auto;
-      margin-bottom: 10px;
+      margin-right: 10px;
       cursor: pointer;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     .profile-details {
-      margin: 0 auto;
+      flex-grow: 1;
     }
 
     .caption {
@@ -124,6 +124,9 @@
         <div class="profile-details">
             <h2 id="userNickname">User</h2>
             <p id="userBio">User Bio</p>
+            <button onclick="uploadProfilePicture()">Upload Profile Picture</button>
+            <button onclick="setNickname()">Set Nickname</button>
+            <button onclick="setBio()">Set Bio</button>
         </div>
         <button class="logout-btn" onclick="logout()">Logout</button>
     </div>
@@ -141,6 +144,9 @@
         <textarea id="roomBio" placeholder="Room Bio"></textarea>
         <button onclick="createChatRoom()">Create Room</button>
     </aside>
+    <div id="chatWindow" class="chat-window"></div>
+    <input type="text" id="messageInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
 </div>
 
 <script>
@@ -175,6 +181,21 @@
         document.getElementById('userAvatar').src = currentUser.avatar || 'default-avatar.png';
         document.getElementById('userNickname').textContent = currentUser.nickname || 'User';
         document.getElementById('userBio').textContent = currentUser.bio || 'User Bio';
+    }
+
+    function uploadProfilePicture() {
+        // Implement profile picture upload logic
+        alert('Upload profile picture feature is not implemented yet');
+    }
+
+    function setNickname() {
+        // Implement nickname setting logic
+        alert('Set nickname feature is not implemented yet');
+    }
+
+    function setBio() {
+        // Implement bio setting logic
+        alert('Set bio feature is not implemented yet');
     }
 
     function logout() {
@@ -236,6 +257,44 @@
 
     function renderChatMessages() {
         // Render chat messages for the current room
+    }
+
+    function sendMessage() {
+        const messageInput = document.getElementById('messageInput');
+        const message = messageInput.value.trim();
+        if (message !== '') {
+          const nickname = localStorage.getItem('nickname') || 'Anonymous';
+          const bio = localStorage.getItem('bio') || '';
+          const profilePicUrl = localStorage.getItem('profile_picture') || '';
+          // Implement Firebase or other database logic here
+          // For demonstration purposes, alert is used
+          alert(`Message: ${message}\nNickname: ${nickname}\nBio: ${bio}\nProfile Picture URL: ${profilePicUrl}`);
+          messageInput.value = '';
+        }
+    }
+
+    // Function to handle new messages received from the database
+    function handleNewMessage(snapshot) {
+        const message = snapshot.val();
+        const chatWindow = document.getElementById('chatWindow');
+        const chatMessage = document.createElement('div');
+        chatMessage.classList.add('message');
+        const profileContainer = document.createElement('div');
+        profileContainer.classList.add('profile-container');
+        const profilePic = document.createElement('img');
+        profilePic.classList.add('profile-pic');
+        profilePic.src = message.profilePicUrl || 'default_profile_pic.jpg';
+        profilePic.alt = 'Profile Picture';
+        profilePic.onclick = function() {
+          window.open('profile.html?nickname=' + encodeURIComponent(message.nickname) + '&bio=' + encodeURIComponent(message.bio) + '&profilePicUrl=' + encodeURIComponent(message.profilePicUrl));
+        };
+        const profileDetails = document.createElement('div');
+        profileDetails.classList.add('profile-details');
+        profileDetails.innerHTML = `<strong>${message.nickname}</strong><br>${message.message}`;
+        profileContainer.appendChild(profilePic);
+        profileContainer.appendChild(profileDetails);
+        chatMessage.appendChild(profileContainer);
+        chatWindow.appendChild(chatMessage);
     }
 </script>
 </body>
