@@ -44,23 +44,23 @@
     }
 
     .profile-container {
-      display: flex;
-      align-items: center;
+      text-align: center;
       margin-bottom: 10px;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     .profile-pic {
-      width: 50px;
-      height: 50px;
+      width: 100px;
+      height: 100px;
       border-radius: 50%;
-      margin-right: 10px;
+      margin: 0 auto;
+      margin-bottom: 10px;
       cursor: pointer;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     }
 
     .profile-details {
-      flex-grow: 1;
+      margin: 0 auto;
     }
 
     .caption {
@@ -115,9 +115,6 @@
     <h2>Login</h2>
     <input type="email" id="emailInput" placeholder="Email">
     <input type="password" id="passwordInput" placeholder="Password">
-    <input type="file" accept="image/*" id="avatarInput">
-    <input type="text" id="nicknameInput" placeholder="Nickname">
-    <input type="text" id="bioInput" placeholder="Bio">
     <button onclick="login()">Login</button>
 </div>
 
@@ -154,11 +151,8 @@
     function login() {
         const email = document.getElementById('emailInput').value.trim();
         const password = document.getElementById('passwordInput').value.trim();
-        const avatarFile = document.getElementById('avatarInput').files[0];
-        const nickname = document.getElementById('nicknameInput').value.trim();
-        const bio = document.getElementById('bioInput').value.trim();
 
-        if (!email || !password || !avatarFile || !nickname || !bio) {
+        if (!email || !password) {
             alert('Please fill in all fields');
             return;
         }
@@ -166,10 +160,7 @@
         // Here you should implement your authentication logic
         // For simplicity, we'll assume successful login
         currentUser = {
-            email,
-            nickname,
-            avatar: URL.createObjectURL(avatarFile),
-            bio
+            email
         };
 
         // Display profile setup container
