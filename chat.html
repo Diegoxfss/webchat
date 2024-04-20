@@ -103,6 +103,10 @@
       max-width: 100px;
       margin-bottom: 10px;
     }
+
+    .logout-btn {
+      margin-left: auto;
+    }
   </style>
 </head>
 <body>
@@ -114,12 +118,15 @@
     <button onclick="login()">Login</button>
 </div>
 
-<div class="container" id="profileSetupContainer" style="display: none;">
-    <h2>Profile Setup</h2>
-    <input type="file" accept="image/*" id="avatarInput">
-    <input type="text" id="nicknameInput" placeholder="Nickname">
-    <input type="text" id="bioInput" placeholder="Bio">
-    <button onclick="setupProfile()">Save Profile</button>
+<div class="profile-container" id="profileContainer" style="display: none;">
+    <div class="profile">
+        <img id="userAvatar" src="default-avatar.png" alt="Profile Picture" class="profile-pic">
+        <div class="profile-details">
+            <h2 id="userNickname">User</h2>
+            <p id="userBio">User Bio</p>
+        </div>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
 </div>
 
 <div class="container chat-container" id="chatContainer" style="display: none;">
@@ -134,16 +141,6 @@
         <textarea id="roomBio" placeholder="Room Bio"></textarea>
         <button onclick="createChatRoom()">Create Room</button>
     </aside>
-</div>
-
-<div class="profile-container" id="profileContainer" style="display: none;">
-    <div class="profile">
-        <img id="viewedAvatar" src="default-avatar.png" alt="Profile Picture" class="profile-pic">
-        <div class="profile-details">
-            <h2 id="viewedNickname">User</h2>
-            <p id="viewedBio">User Bio</p>
-        </div>
-    </div>
 </div>
 
 <script>
@@ -168,27 +165,23 @@
 
         // Display profile setup container
         document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('profileSetupContainer').style.display = 'block';
+        document.getElementById('profileContainer').style.display = 'block';
+        document.getElementById('chatContainer').style.display = 'block';
+        showProfile();
+        showChatRooms();
     }
 
-    function setupProfile() {
-        const avatarFile = document.getElementById('avatarInput').files[0];
-        const nickname = document.getElementById('nicknameInput').value.trim();
-        const bio = document.getElementById('bioInput').value.trim();
+    function showProfile() {
+        document.getElementById('userAvatar').src = currentUser.avatar || 'default-avatar.png';
+        document.getElementById('userNickname').textContent = currentUser.nickname || 'User';
+        document.getElementById('userBio').textContent = currentUser.bio || 'User Bio';
+    }
 
-        if (!avatarFile || !nickname || !bio) {
-            alert('Please fill in all fields');
-            return;
-        }
-
-        currentUser.avatar = URL.createObjectURL(avatarFile);
-        currentUser.nickname = nickname;
-        currentUser.bio = bio;
-
-        // Hide profile setup container and show chat container
-        document.getElementById('profileSetupContainer').style.display = 'none';
-        document.getElementById('chatContainer').style.display = 'block';
-        showChatRooms();
+    function logout() {
+        currentUser = null;
+        document.getElementById('profileContainer').style.display = 'none';
+        document.getElementById('chatContainer').style.display = 'none';
+        document.getElementById('loginContainer').style.display = 'block';
     }
 
     function showChatRooms() {
@@ -243,22 +236,6 @@
 
     function renderChatMessages() {
         // Render chat messages for the current room
-    }
-
-    // Function to view other user's profile when clicking on their picture
-    function viewProfile() {
-        // Retrieve the viewed user's details from the message
-        const viewedUserAvatar = document.getElementById('viewedAvatar');
-        const viewedUserNickname = document.getElementById('viewedNickname');
-        const viewedUserBio = document.getElementById('viewedBio');
-
-        // Show the profile container
-        document.getElementById('profileContainer').style.display = 'block';
-
-        // Assuming the viewed user's details are hardcoded here for demonstration
-        viewedUserAvatar.src = 'other-user-avatar.png';
-        viewedUserNickname.textContent = 'Other User';
-        viewedUserBio.textContent = 'Other user\'s bio...';
     }
 </script>
 </body>
