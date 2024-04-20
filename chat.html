@@ -3,129 +3,269 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat Rooms</title>
+<title>Simple Social Media Chat</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f5f5f5;
-    }
-    .container {
-        width: 100%;
-        max-width: 800px;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    h2 {
-        margin-top: 0;
-    }
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    textarea {
-        width: calc(100% - 20px);
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        box-sizing: border-box;
-    }
-    input[type="file"] {
-        margin-bottom: 20px;
-    }
-    button {
-        padding: 10px 20px;
-        background-color: #4caf50;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #45a049;
-    }
-    .chat-room {
-        display: flex;
-        align-items: center;
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ccc;
-        border-radius: 10px;
-        cursor: pointer;
-        transition: background-color 0.3s, box-shadow 0.3s;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .chat-room:hover {
-        background-color: #f0f0f0;
-    }
-    .chat-room img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 10px;
-        object-fit: cover;
-    }
-    .chat-room-info {
-        flex: 1;
-    }
-    .chat-container {
-        display: none;
-    }
-    .message {
-        margin-bottom: 10px;
-    }
-    .message img {
-        max-width: 100%;
-        height: auto;
-        display: block;
-        margin-top: 5px;
-        border-radius: 5px;
-    }
-    #profileInfo {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-    }
-    #profileInfo img {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        margin-right: 10px;
-        cursor: pointer; /* Add cursor pointer to indicate it's clickable */
-    }
-    .user-avatar {
-        width: 30px; /* Adjust the size as needed */
-        height: 30px; /* Adjust the size as needed */
-        border-radius: 50%; /* Make it round */
-        margin-right: 5px; /* Adjust the spacing */
-    }
-    .profile-container {
-        display: none;
-    }
-    .profile {
-        padding: 20px;
-        background-color: #f9f9f9;
-        border-radius: 5px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-    }
-    .profile img {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        margin-bottom: 10px;
-    }
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        grid-gap: 20px;
-    }
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  main {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+  }
+
+  .chat-window {
+    border: 1px solid #ccc;
+    min-height: 300px;
+    margin-bottom: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .message {
+    margin-bottom: 5px;
+  }
+
+  .profile-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile-details {
+    flex-grow: 1;
+  }
+
+  .caption {
+    font-style: italic;
+    color: #888;
+  }
+
+  .file-container {
+    margin-top: 10px;
+  }
+
+  .file-link {
+    display: block;
+    margin-bottom: 5px;
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  aside {
+    background-color: #f5f5f5;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  #profilePic {
+    max-width: 100px;
+    margin-bottom: 10px;
+  }
+
+  #nicknameInput {
+    width: calc(100% - 70px);
+  }
+
+  .container {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  h2 {
+    margin-top: 0;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+  }
+
+  input[type="file"] {
+    margin-bottom: 20px;
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }
+
+  .chat-room {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .chat-room:hover {
+    background-color: #f0f0f0;
+  }
+
+  .chat-room img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+  }
+
+  .chat-room-info {
+    flex: 1;
+  }
+
+  .chat-container {
+    display: none;
+  }
+
+  .message {
+    margin-bottom: 10px;
+  }
+
+  .message img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 5px;
+    border-radius: 5px;
+  }
+
+  #profileInfo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  #profileInfo img {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    cursor: pointer; /* Add cursor pointer to indicate it's clickable */
+  }
+
+  .user-avatar {
+    width: 30px; /* Adjust the size as needed */
+    height: 30px; /* Adjust the size as needed */
+    border-radius: 50%; /* Make it round */
+    margin-right: 5px; /* Adjust the spacing */
+  }
+
+  .profile-container {
+    display: none;
+  }
+
+  .profile {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .profile img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+  }
 </style>
 </head>
 <body>
+<div class="chat-container">
+  <header>
+    <h1>Simple Social Media Chat</h1>
+  </header>
+  <main>
+    <div class="chat-window" id="chatWindow"></div>
+    <input type="text" id="messageInput" placeholder="Type your message...">
+    <button onclick="sendMessage()">Send</button>
+  </main>
+  <aside id="userPanel" style="display: none;">
+    <input type="file" id="fileInput" accept="image/*, .pdf, .doc, .docx">
+    <img src="" alt="Profile Picture" id="profilePic" class="profile-pic">
+    <input type="text" id="nicknameInput" placeholder="Choose a nickname">
+    <input type="text" id="bioInput" placeholder="Add a bio">
+    <button onclick="changeNickname()">Change Nickname</button>
+    <button onclick="logOff()">Log Off</button>
+  </aside>
+  <aside id="loginPanel">
+    <input type="text" id="loginUsername" placeholder="Username">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button onclick="logIn()">Log In</button>
+  </aside>
+</div>
+
 <div class="container" id="loginContainer">
     <div id="profileInfo" style="display: none;">
         <img id="profileAvatar" src="default-avatar.png" alt="Profile Picture" onclick="viewProfile()">
@@ -140,22 +280,24 @@
 </div>
 
 <div class="container chat-container" id="chatContainer" style="display: none;">
-    <header>
-        <h1>Simple Social Media Chat</h1>
-    </header>
-    <main>
-        <div class="chat-window" id="chatWindow"></div>
-        <input type="text" id="messageInput" placeholder="Type your message...">
-        <button onclick="sendMessage()">Send</button>
-    </main>
-    <aside id="userPanel" style="display: none;">
-        <input type="file" id="fileInput" accept="image/*, .pdf, .doc, .docx">
-        <img src="" alt="Profile Picture" id="profilePic" class="profile-pic">
-        <input type="text" id="nicknameInput" placeholder="Choose a nickname">
-        <input type="text" id="bioInput" placeholder="Add a bio">
-        <button onclick="changeNickname()">Change Nickname</button>
-        <button onclick="logOff()">Log Off</button>
-    </aside>
+    <h2>Chat Rooms</h2>
+    <div class="grid-container" id="chatRooms"></div>
+    <div class="create-room">
+        <h3>Create New Chat Room</h3>
+        <input type="text" id="roomName" placeholder="Room Name">
+        <input type="file" accept="image/*" id="roomAvatarInput">
+        <textarea id="roomBio" placeholder="Room Bio"></textarea>
+        <button onclick="createChatRoom()">Create Room</button>
+    </div>
+    <div id="chatRoomContent">
+        <h2 id="roomTitle"></h2>
+        <div id="chatMessages"></div>
+        <div class="message">
+            <input type="text" id="messageInput" placeholder="Type your message...">
+            <input type="file" accept="image/*" id="imageInput">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
 </div>
 
 <div class="profile-container" id="profileContainer">
@@ -167,6 +309,102 @@
 </div>
 
 <script>
+  function sendMessage() {
+    const messageInput = document.getElementById('messageInput');
+    const message = messageInput.value.trim();
+    if (message !== '') {
+      const nickname = localStorage.getItem('nickname') || 'Anonymous';
+      const bio = localStorage.getItem('bio') || '';
+      const profilePicUrl = localStorage.getItem('profile_picture') || '';
+      const chatWindow = document.getElementById('chatWindow');
+      const chatMessage = document.createElement('div');
+      chatMessage.classList.add('message');
+      const profileContainer = document.createElement('div');
+      profileContainer.classList.add('profile-container');
+      const profilePic = document.createElement('img');
+      profilePic.classList.add('profile-pic');
+      profilePic.src = profilePicUrl || 'default_profile_pic.jpg';
+      profilePic.alt = 'Profile Picture';
+      profilePic.onclick = function() {
+        window.open('profile.html?nickname=' + encodeURIComponent(nickname) + '&bio=' + encodeURIComponent(bio) + '&profilePicUrl=' + encodeURIComponent(profilePicUrl));
+      };
+      const profileDetails = document.createElement('div');
+      profileDetails.classList.add('profile-details');
+      profileDetails.innerHTML = `<strong>${nickname}</strong><br>${message}`;
+      profileContainer.appendChild(profilePic);
+      profileContainer.appendChild(profileDetails);
+      chatMessage.appendChild(profileContainer);
+      chatWindow.appendChild(chatMessage);
+      messageInput.value = '';
+    }
+  }
+
+  function changeNickname() {
+    const nicknameInput = document.getElementById('nicknameInput');
+    const bioInput = document.getElementById('bioInput');
+    const nickname = nicknameInput.value.trim();
+    const bio = bioInput.value.trim();
+    if (nickname !== '') {
+      localStorage.setItem('nickname', nickname);
+      localStorage.setItem('bio', bio);
+    }
+  }
+
+  const fileInput = document.getElementById('fileInput');
+  const profilePic = document.getElementById('profilePic');
+
+  fileInput.addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      profilePic.src = e.target.result;
+      localStorage.setItem('profile_picture', e.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
+
+  profilePic.addEventListener('click', function() {
+    const profilePicUrl = localStorage.getItem('profile_picture');
+    if (profilePicUrl) {
+      window.open(profilePicUrl);
+    }
+  });
+
+  function logIn() {
+    // Your authentication logic goes here
+    // For simplicity, I'm assuming successful login
+    document.getElementById('loginPanel').style.display = 'none';
+    document.getElementById('userPanel').style.display = 'block';
+  }
+
+  function logOff() {
+    // Your logoff logic goes here
+    // For simplicity, I'm clearing the local storage and displaying the login panel
+    localStorage.clear();
+    document.getElementById('loginPanel').style.display = 'block';
+    document.getElementById('userPanel').style.display = 'none';
+  }
+
+  // Check if the user is already logged in
+  if (localStorage.getItem('nickname')) {
+    document.getElementById('loginPanel').style.display = 'none';
+    document.getElementById('userPanel').style.display = 'block';
+    // Set profile picture if available
+    const profilePicUrl = localStorage.getItem('profile_picture');
+    if (profilePicUrl) {
+      profilePic.src = profilePicUrl;
+    }
+    // Set nickname and bio if available
+    const nickname = localStorage.getItem('nickname');
+    const bio = localStorage.getItem('bio');
+    if (nickname) {
+      document.getElementById('nicknameInput').value = nickname;
+    }
+    if (bio) {
+      document.getElementById('bioInput').value = bio;
+    }
+  }
+
     let currentUser = null;
     let chatRooms = [];
     let currentRoomIndex = -1; // Index of the current room being viewed
@@ -336,45 +574,6 @@
         viewedUserAvatar.src = 'other-user-avatar.png';
         viewedUserNickname.textContent = 'Other User';
         viewedUserBio.textContent = 'Other user\'s bio...';
-    }
-
-    function changeNickname() {
-        const nicknameInput = document.getElementById('nicknameInput');
-        const bioInput = document.getElementById('bioInput');
-        const nickname = nicknameInput.value.trim();
-        const bio = bioInput.value.trim();
-        if (nickname !== '') {
-            localStorage.setItem('nickname', nickname);
-            localStorage.setItem('bio', bio);
-        }
-    }
-
-    function logOff() {
-        // Your logoff logic goes here
-        // For simplicity, I'm clearing the local storage and displaying the login panel
-        localStorage.clear();
-        document.getElementById('loginContainer').style.display = 'block';
-        document.getElementById('chatContainer').style.display = 'none';
-    }
-
-    // Check if the user is already logged in
-    if (localStorage.getItem('nickname')) {
-        document.getElementById('loginContainer').style.display = 'none';
-        document.getElementById('chatContainer').style.display = 'block';
-        // Set profile picture if available
-        const profilePicUrl = localStorage.getItem('profile_picture');
-        if (profilePicUrl) {
-            document.getElementById('profilePic').src = profilePicUrl;
-        }
-        // Set nickname and bio if available
-        const nickname = localStorage.getItem('nickname');
-        const bio = localStorage.getItem('bio');
-        if (nickname) {
-            document.getElementById('nicknameInput').value = nickname;
-        }
-        if (bio) {
-            document.getElementById('bioInput').value = bio;
-        }
     }
 </script>
 </body>
