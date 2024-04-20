@@ -111,6 +111,9 @@
     <h2>Login</h2>
     <input type="email" id="emailInput" placeholder="Email">
     <input type="password" id="passwordInput" placeholder="Password">
+    <input type="file" accept="image/*" id="avatarInput">
+    <input type="text" id="nicknameInput" placeholder="Nickname">
+    <input type="text" id="bioInput" placeholder="Bio">
     <button onclick="login()">Login</button>
 </div>
 
@@ -130,7 +133,7 @@
 
 <div class="profile-container" id="profileContainer" style="display: none;">
     <div class="profile">
-        <img id="viewedAvatar" src="default-avatar.png" alt="Profile Picture">
+        <img id="viewedAvatar" src="default-avatar.png" alt="Profile Picture" class="profile-pic">
         <div class="profile-details">
             <h2 id="viewedNickname">User</h2>
             <p id="viewedBio">User Bio</p>
@@ -146,8 +149,11 @@
     function login() {
         const email = document.getElementById('emailInput').value.trim();
         const password = document.getElementById('passwordInput').value.trim();
+        const avatarFile = document.getElementById('avatarInput').files[0];
+        const nickname = document.getElementById('nicknameInput').value.trim();
+        const bio = document.getElementById('bioInput').value.trim();
 
-        if (!email || !password) {
+        if (!email || !password || !avatarFile || !nickname || !bio) {
             alert('Please fill in all fields');
             return;
         }
@@ -155,7 +161,10 @@
         // Here you should implement your authentication logic
         // For simplicity, we'll assume successful login
         currentUser = {
-            email
+            email,
+            nickname,
+            avatar: URL.createObjectURL(avatarFile),
+            bio
         };
 
         // Display chat container
