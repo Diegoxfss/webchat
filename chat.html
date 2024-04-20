@@ -111,10 +111,15 @@
     <h2>Login</h2>
     <input type="email" id="emailInput" placeholder="Email">
     <input type="password" id="passwordInput" placeholder="Password">
+    <button onclick="login()">Login</button>
+</div>
+
+<div class="container" id="profileSetupContainer" style="display: none;">
+    <h2>Profile Setup</h2>
     <input type="file" accept="image/*" id="avatarInput">
     <input type="text" id="nicknameInput" placeholder="Nickname">
     <input type="text" id="bioInput" placeholder="Bio">
-    <button onclick="login()">Login</button>
+    <button onclick="setupProfile()">Save Profile</button>
 </div>
 
 <div class="container chat-container" id="chatContainer" style="display: none;">
@@ -149,11 +154,8 @@
     function login() {
         const email = document.getElementById('emailInput').value.trim();
         const password = document.getElementById('passwordInput').value.trim();
-        const avatarFile = document.getElementById('avatarInput').files[0];
-        const nickname = document.getElementById('nicknameInput').value.trim();
-        const bio = document.getElementById('bioInput').value.trim();
 
-        if (!email || !password || !avatarFile || !nickname || !bio) {
+        if (!email || !password) {
             alert('Please fill in all fields');
             return;
         }
@@ -161,14 +163,30 @@
         // Here you should implement your authentication logic
         // For simplicity, we'll assume successful login
         currentUser = {
-            email,
-            nickname,
-            avatar: URL.createObjectURL(avatarFile),
-            bio
+            email
         };
 
-        // Display chat container
+        // Display profile setup container
         document.getElementById('loginContainer').style.display = 'none';
+        document.getElementById('profileSetupContainer').style.display = 'block';
+    }
+
+    function setupProfile() {
+        const avatarFile = document.getElementById('avatarInput').files[0];
+        const nickname = document.getElementById('nicknameInput').value.trim();
+        const bio = document.getElementById('bioInput').value.trim();
+
+        if (!avatarFile || !nickname || !bio) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        currentUser.avatar = URL.createObjectURL(avatarFile);
+        currentUser.nickname = nickname;
+        currentUser.bio = bio;
+
+        // Hide profile setup container and show chat container
+        document.getElementById('profileSetupContainer').style.display = 'none';
         document.getElementById('chatContainer').style.display = 'block';
         showChatRooms();
     }
